@@ -184,7 +184,7 @@ public class SwerveModule{
 
     public void run(){
        // desiredState = SwerveModuleState.optimize(desiredState, Rotation2d.fromRadians(getTurningPosition()));
-        desiredAngle = desiredState.angle.getDegrees();
+        desiredAngle = desiredState.angle.getDegrees()+180;
 
         double velocity = desiredState.speedMetersPerSecond / ModuleConstants.kMetersPerRevolution / ModuleConstants.kDriveMotorGearRatio; //Convert MPS to RPS
         // double velocity = desiredState.speedMetersPerSecond / ModuleConstants.kDriveTicksPer100MsToMetersPerSec / ModuleConstants.kDriveMotorGearRatio;
@@ -200,7 +200,7 @@ public class SwerveModule{
             }
             else{
                 desiredAngle+=180;  }
-            velocity *=-1;
+            desiredVelocity *=-1;
         }
         
         double turnPower = turnPIDController.calculate(trackedCurrentAngle, desiredAngle);
@@ -212,10 +212,10 @@ public class SwerveModule{
         }
         else if (this.velocityControl) {
             driveVelocityRequest.Slot = 0;
-            //driveMotor.setControl(driveVelocityRequest.withVelocity(velocity));
+            //driveMotor.setControl(driveVelocityRequest.withVelocity(desiredVelocity));
             this.currentPercent = 0;
         } else {
-            this.currentPercent = desiredState.speedMetersPerSecond / SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond;
+            this.currentPercent = desiredVelocity / SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond;
             this.driveRequest.Output = currentPercent;
             //driveMotor.setControl(this.driveRequest);
         }
@@ -371,7 +371,7 @@ public class SwerveModule{
         if (level == 0)  {
             return;
         }
-        int moduleId = (driveMotorID / 10);
+        int moduleId = driveMotorID  ;
         ShuffleboardTab tab = Shuffleboard.getTab("Module " + moduleId);
 
         switch (level) {
