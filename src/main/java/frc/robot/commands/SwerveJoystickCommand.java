@@ -7,12 +7,14 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.subsystems.LEDs.DriveTrainLEDs;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
 public class SwerveJoystickCommand extends Command {
@@ -66,6 +68,13 @@ public class SwerveJoystickCommand extends Command {
   public void execute() {
     driveFromChassis(ChassisSpeeds.fromFieldRelativeSpeeds(-modifyInputs(x.getAsDouble(), false), -modifyInputs(y.getAsDouble(), false),-modifyInputs(z.getAsDouble(), true),
     drive.getDriveHeading()));
+
+    //set LED Color
+    double[] hueRange = {120,180};
+    double maxSpeed = 1;
+    double currentSpeed = Math.sqrt(x.getAsDouble()*x.getAsDouble() + y.getAsDouble()*y.getAsDouble());
+    currentSpeed = MathUtil.clamp(currentSpeed, 0, 1);
+    DriveTrainLEDs.setHueLerp(hueRange, currentSpeed/maxSpeed);
   }
 
   // Called once the command ends or is interrupted.

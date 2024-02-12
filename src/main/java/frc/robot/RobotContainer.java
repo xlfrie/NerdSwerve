@@ -5,8 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.LEDTest;
 import frc.robot.commands.SwerveJoystickCommand;
 import frc.robot.subsystems.GyroStuffs.PigeonV2;
+import frc.robot.subsystems.LEDs.DriveTrainLEDs;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
 import javax.print.attribute.standard.NumberUp;
@@ -16,6 +18,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -29,8 +32,11 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   PS5Controller driveController = new PS5Controller(0);
+  private JoystickButton squareButton = new JoystickButton(driveController, 1);
   private PigeonV2 gyro = new PigeonV2(0);
   private SwerveDriveTrain drive = new SwerveDriveTrain(gyro);
+  private DriveTrainLEDs dtLEDs = new DriveTrainLEDs();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive.setDefaultCommand(new SwerveJoystickCommand(driveController::getLeftY, driveController::getLeftX, driveController::getRightX, drive));

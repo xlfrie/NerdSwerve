@@ -241,7 +241,7 @@ public class SwerveDriveTrain extends SubsystemBase {
         };
     }
 
-    private ChassisSpeeds getChassisSpeeds() {
+    public ChassisSpeeds getChassisSpeeds() {
         return SwerveDriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
     }
 
