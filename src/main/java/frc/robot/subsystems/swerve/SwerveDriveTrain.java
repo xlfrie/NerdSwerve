@@ -77,14 +77,14 @@ public class SwerveDriveTrain extends SubsystemBase {
    */
   public SwerveDriveTrain(PigeonV2 gyro) {
     //Initializing the modules
-      frontLeft = new SwerveModule(
+                 frontLeft = new SwerveModule(
                     SwerveDriveConstants.kFLDriveID,
                     SwerveDriveConstants.kFLTurningID,
                     SwerveDriveConstants.kFLDriveReversed,
                     SwerveDriveConstants.kFLTurningReversed,
                     CANCoderConstants.kFLCANCoderID,
                     CANCoderConstants.kFLCANCoderReversed,
-                    ModuleConstants.kFLEncoderOffset);
+                    CANCoderConstants.kFLEncoderOffset);
                 frontRight = new SwerveModule(
                     SwerveDriveConstants.kFRDriveID,
                     SwerveDriveConstants.kFRTurningID,
@@ -92,7 +92,7 @@ public class SwerveDriveTrain extends SubsystemBase {
                     SwerveDriveConstants.kFRTurningReversed,
                     CANCoderConstants.kFRCANCoderID,
                     CANCoderConstants.kFRCANCoderReversed,
-                    ModuleConstants.kFREncoderOffset);
+                    CANCoderConstants.kFREncoderOffset);
                 backLeft = new SwerveModule(
                     SwerveDriveConstants.kBLDriveID,
                     SwerveDriveConstants.kBLTurningID,
@@ -100,7 +100,7 @@ public class SwerveDriveTrain extends SubsystemBase {
                     SwerveDriveConstants.kBLTurningReversed,
                     CANCoderConstants.kBLCANCoderID,
                     CANCoderConstants.kBLCANCoderReversed,
-                    ModuleConstants.kBLEncoderOffset);
+                    CANCoderConstants.kBLEncoderOffset);
                 backRight = new SwerveModule(
                     SwerveDriveConstants.kBRDriveID,
                     SwerveDriveConstants.kBRTurningID,
@@ -108,7 +108,7 @@ public class SwerveDriveTrain extends SubsystemBase {
                     SwerveDriveConstants.kBRTurningReversed,
                     CANCoderConstants.kBRCANCoderID,
                     CANCoderConstants.kBRCANCoderReversed,
-                    ModuleConstants.kBREncoderOffset);
+                    CANCoderConstants.kBREncoderOffset);
 
     this.gyro = gyro;
 
@@ -120,7 +120,6 @@ public class SwerveDriveTrain extends SubsystemBase {
         
     field = new Field2d();
     field.setRobotPose(poseEstimator.getEstimatedPosition());
-
      AutoBuilder.configureHolonomic(
             this::getPose,
             this::resetOdometry, 
@@ -149,6 +148,8 @@ public class SwerveDriveTrain extends SubsystemBase {
   public void periodic() {
     runModules();
     poseEstimator.update(gyro.getRotation2d(), getModulePositions());
+    field.setRobotPose(poseEstimator.getEstimatedPosition());
+
 
     // This method will be called once per scheduler run
   }
@@ -313,7 +314,7 @@ public class SwerveDriveTrain extends SubsystemBase {
      * @param desiredStates desired states of the four modules (FL, FR, BL, BR)
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+      //  SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         frontLeft.setDesiredState(desiredStates[0]);
         frontRight.setDesiredState(desiredStates[1]);
         backLeft.setDesiredState(desiredStates[2]);
@@ -336,7 +337,8 @@ public class SwerveDriveTrain extends SubsystemBase {
       poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), pose);
   }
 
-    public void initShuffleboard(int level) {
+    public void initMainShuffleboard(int level) {
+
         //Im dumb, so 0 = off, 1 = everything, 2 = medium, 3 = minimal
 
         if (level == 0)  {
@@ -353,6 +355,7 @@ public class SwerveDriveTrain extends SubsystemBase {
             case 0:
                 break;
             case 1:
+
                 tab.add("Field Position", field).withSize(6, 3);
                 tab.addString(("Current Command"), () -> {
                     Command currCommand = this.getCurrentCommand();

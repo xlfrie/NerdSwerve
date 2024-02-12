@@ -61,17 +61,14 @@ public final class Constants {
     public static final double kDTurning = 0; 
     public static final double kFTurning = 0; 
 
-    public static final double kPDrive = 0; // 0.6
+    public static final double kPDrive = 0.125; // 0.6
     public static final double kIDrive = 0;
-    public static final double kDDrive = 0; 
-    public static final double kVDrive = 0; 
+    public static final double kDDrive = 0.01; 
+    public static final double kVDrive = 0.11; 
 
     public static final String kCANivoreName = "rio";
 
-    public static final double kFLEncoderOffset = 0;
-    public static final double kBLEncoderOffset = 0;
-    public static final double kFREncoderOffset = 0;
-    public static final double kBREncoderOffset = 0;
+
 
   } 
 
@@ -85,10 +82,10 @@ public final class Constants {
     public static final double kWheelBase = 0.635;
 
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-      new Translation2d(kWheelBase / 2, kTrackWidth / 2),
-      new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+      new Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
       new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-      new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+      new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+      new Translation2d(kWheelBase / 2, kTrackWidth / 2));
     
     public static final int kFRDriveID = 25;
     public static final int kFLDriveID = 27;
@@ -123,10 +120,15 @@ public final class Constants {
       public static final boolean kBLCANCoderReversed = false;       
       public static final boolean kBRCANCoderReversed = false;
       
-      public static final double kBRCANCoderOffset = -141.67;
-      public static final double kFRCANCoderOffset = -119.17;
-      public static final double kFLCANCoderOffset= 152.25;
-      public static final double kBLCANCoderOffset = 38.75;
+      // public static final double kBRCANCoderOffset = -141.67;
+      // public static final double kFRCANCoderOffset = -119.17;
+      // public static final double kFLCANCoderOffset= 152.25;
+      // public static final double kBLCANCoderOffset = 38.75;
+
+      public static final double kFLEncoderOffset = 119.6+90;
+      public static final double kBLEncoderOffset = -130.7+90;
+      public static final double kFREncoderOffset = 33.1+90;
+      public static final double kBREncoderOffset = 52.82+90;
   
       
     }
@@ -155,10 +157,10 @@ public final class Constants {
 
     public static final SwerveModuleState[] towModuleStates = 
     new SwerveModuleState[] {
-        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-        new SwerveModuleState(0, Rotation2d.fromDegrees(-135)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(135)),
         new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
-        new SwerveModuleState(0, Rotation2d.fromDegrees(135))
+        new SwerveModuleState(0, Rotation2d.fromDegrees(225)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(315))
     };
 
     public static final double kGravityMPS = 9.80665;

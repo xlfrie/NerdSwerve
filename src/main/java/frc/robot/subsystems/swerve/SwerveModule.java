@@ -113,7 +113,7 @@ public class SwerveModule{
             ModuleConstants.kITurning,
             ModuleConstants.kDTurning);
         
-        turnPIDController.enableContinuousInput(0, 2 * Math.PI); // Originally was -pi to pi
+        turnPIDController.enableContinuousInput(0, 360); // Originally was -pi to pi
         turnPIDController.setTolerance(.005);
 
         this.driveMotor.setInverted(invertDriveMotor);
@@ -140,7 +140,7 @@ public class SwerveModule{
         this.canCoder = new CANcoder(CANCoderId, ModuleConstants.kCANivoreName);
         CANcoderConfiguration config = new CANcoderConfiguration();
         config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-        config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
         for(int i=0;i<5;i++){
             initializationStatus = canCoder.getConfigurator().apply(config);
             if(initializationStatus.isOK())
@@ -203,21 +203,19 @@ public class SwerveModule{
             desiredVelocity *=-1;
         }
         
-        double turnPower = turnPIDController.calculate(trackedCurrentAngle, desiredAngle);
-        currentTurnPercent = turnPower;
-        //turnMotor.set(currentTurnPercent);
+        turnMotor.set(turnPIDController.calculate(trackedCurrentAngle, desiredAngle));
  
         if (Math.abs(velocity) < 0.001) {
-          //  driveMotor.setControl(brakeRequest);
+            driveMotor.setControl(brakeRequest);
         }
         else if (this.velocityControl) {
             driveVelocityRequest.Slot = 0;
-            //driveMotor.setControl(driveVelocityRequest.withVelocity(desiredVelocity));
+            driveMotor.setControl(driveVelocityRequest.withVelocity(desiredVelocity));
             this.currentPercent = 0;
         } else {
             this.currentPercent = desiredVelocity / SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond;
             this.driveRequest.Output = currentPercent;
-            //driveMotor.setControl(this.driveRequest);
+            driveMotor.setControl(this.driveRequest);
         }
 
 
@@ -331,8 +329,10 @@ public class SwerveModule{
     }
 
     public SwerveModulePosition getPosition() {
-        currPosition.distanceMeters = getDrivePosition();
-        currPosition.angle = Rotation2d.fromRadians(getTurningPosition());
+        currPosition.distanceMeters = -getDrivePosition(); //Dunno why but this fix everything
+        //currPosition.angle = Rotation2d.fromRadians(getTurningPosition());
+        currPosition.angle = Rotation2d.fromDegrees(getTurningPositionDegreesWithOffset());
+
         return currPosition;
         //return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningPosition()));
     }
@@ -354,7 +354,7 @@ public class SwerveModule{
      * @param state The desired state for this Swerve Module
      */
     public void setDesiredState(SwerveModuleState state) {
-        if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        if (Math.abs(state.speedMetersPerSecond) < 0.01) {
             state.speedMetersPerSecond = 0;
         }
 

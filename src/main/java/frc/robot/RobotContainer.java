@@ -11,6 +11,8 @@ import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
 import javax.print.attribute.standard.NumberUp;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -55,6 +57,7 @@ public class RobotContainer {
   }
   public void initShuffleboard() {
   drive.initModuleShuffleboard(1);
+  drive.initMainShuffleboard(1);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -62,7 +65,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return new PathPlannerAuto("New Auto");
+
     // An example command will be run in autonomous
-    return null;
+   // return null;
   }
 }
