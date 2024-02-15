@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,15 +25,36 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  Orchestra _orchestra;
+
+  TalonFX [] _fxes =  { new TalonFX(1, "rio"), new TalonFX(2, "rio") };
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+  public void LoadMusic(){
+    _orchestra.loadMusic("anthem.chrp");
+  }
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+  
+        /* A list of TalonFX's that are to be used as instruments */
+   
+    /* Create the orchestra with the TalonFX instruments */
+    _orchestra = new Orchestra();
+    // _orchestra.addInstrument(new TalonFX(25));
+    // _orchestra.addInstrument(new TalonFX(26));
+    // _orchestra.addInstrument(new TalonFX(27));
+    // _orchestra.addInstrument(new TalonFX(28));
+
+
+
+      
   }
 
   /**
@@ -70,6 +97,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    LoadMusic();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -81,7 +109,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    _orchestra.play();
+    
+  }
 
   @Override
   public void testInit() {

@@ -125,15 +125,15 @@ public final class Constants {
       // public static final double kFLCANCoderOffset= 152.25;
       // public static final double kBLCANCoderOffset = 38.75;
 
-      public static final double kFLEncoderOffset = 119.6+90;
-      public static final double kBLEncoderOffset = -130.7+90;
-      public static final double kFREncoderOffset = 33.1+90;
-      public static final double kBREncoderOffset = 52.82+90;
+      public static final double kFLEncoderOffset = 119.6-90;
+      public static final double kBLEncoderOffset = -130.7-90;
+      public static final double kFREncoderOffset = 33.1-90;
+      public static final double kBREncoderOffset = 52.82-90;
   
       
     }
 
-    public static final double kPhysicalMaxSpeedMetersPerSecond = 5;    
+    public static final double kPhysicalMaxSpeedMetersPerSecond = 10;    
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
 
     public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond;
@@ -195,4 +195,20 @@ public final class Constants {
     public static final boolean kUseAllianceColor = true;
   }
 }
+
+  public static final class FlywheelConstants {
+
+    public static final int kTopShooterID = 13;
+    public static final int kBottomShooterID = 14;
+
+    public static final double kPShooter = 0;
+    public static final double kIShooter = 0;
+    public static final double kDShooter = 0;
+    public static final double kFShooter = 0;
+
+
+
+
+
+  }
 }

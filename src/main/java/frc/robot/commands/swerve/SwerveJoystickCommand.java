@@ -2,13 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.swerve;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,8 +67,8 @@ public class SwerveJoystickCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveFromChassis(ChassisSpeeds.fromFieldRelativeSpeeds(-modifyInputs(x.getAsDouble(), false), -modifyInputs(y.getAsDouble(), false),-modifyInputs(z.getAsDouble(), true),
-    drive.getDriveHeading()));
+    driveFromChassis(ChassisSpeeds.fromFieldRelativeSpeeds(modifyInputs(x.getAsDouble(), false), -modifyInputs(y.getAsDouble(), false),modifyInputs(z.getAsDouble(), true),
+    Rotation2d.fromDegrees(-drive.getDriveHeading().getDegrees())));
 
     //set LED Color
     double[] hueRange = {120,180};

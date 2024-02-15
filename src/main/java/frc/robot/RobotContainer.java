@@ -5,7 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.SwerveJoystickCommand;
+import frc.robot.commands.flywheelshooter.FlywheelPercentage;
+import frc.robot.commands.flywheelshooter.FlywheelRPM;
+import frc.robot.commands.swerve.SwerveJoystickCommand;
+import frc.robot.subsystems.FlywheelShooter;
 import frc.robot.subsystems.GyroStuffs.PigeonV2;
 import frc.robot.subsystems.LEDs.DriveTrainLEDs;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
@@ -27,17 +30,27 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
+  // The robot's subsystems and commands are defined here.
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   PS5Controller driveController = new PS5Controller(0);
-  private JoystickButton squareButton = new JoystickButton(driveController, 1);
+  private JoystickButton driveXbutton = new JoystickButton(driveController, 1);
+  private JoystickButton driveAbutton = new JoystickButton(driveController, 2);
+  private JoystickButton driveYbutton = new JoystickButton(driveController, 3);
+  private JoystickButton driveBbutton = new JoystickButton(driveController, 4);
+
+
+
+
   private PigeonV2 gyro = new PigeonV2(0);
   private SwerveDriveTrain drive = new SwerveDriveTrain(gyro);
+ 
+  private FlywheelShooter flywheelShooter  = new FlywheelShooter();
   private DriveTrainLEDs dtLEDs = new DriveTrainLEDs();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     drive.setDefaultCommand(new SwerveJoystickCommand(driveController::getLeftY, driveController::getLeftX, driveController::getRightX, drive));
     // Configure the trigger bindings
     configureBindings();
@@ -59,6 +72,11 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+
+    driveAbutton.whileTrue(new FlywheelPercentage(flywheelShooter,0, true));
+    driveXbutton.whileTrue(new FlywheelRPM(flywheelShooter, true));
+    driveYbutton.whileTrue(new FlywheelPercentage(flywheelShooter, -1.0,false ));
+    driveBbutton.whileTrue(new FlywheelPercentage(flywheelShooter, 1.0,false ));
   }
   public void initShuffleboard() {
   drive.initModuleShuffleboard(1);
@@ -70,9 +88,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("New Auto");
+   return new PathPlannerAuto("New Auto");
 
     // An example command will be run in autonomous
-   // return null;
+//   return null;
   }
 }

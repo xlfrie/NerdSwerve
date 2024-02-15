@@ -111,6 +111,7 @@ public class SwerveDriveTrain extends SubsystemBase {
                     CANCoderConstants.kBREncoderOffset);
 
     this.gyro = gyro;
+    this.gyro.resetHeading(180);
 
     this.poseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics, gyro.getRotation2d(), getModulePositions(), new Pose2d());
             // this.odometer = new SwerveDriveOdometry(
@@ -238,7 +239,7 @@ public class SwerveDriveTrain extends SubsystemBase {
             frontRight.getState(),
             backLeft.getState(),
             backRight.getState()
-        };
+        };  
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -374,6 +375,8 @@ public class SwerveDriveTrain extends SubsystemBase {
                 tab.addNumber("X Position (m)", () -> poseEstimator.getEstimatedPosition().getX());
                 tab.addNumber("Y Position (m)", () -> poseEstimator.getEstimatedPosition().getY());
                 tab.addNumber("Odometry Angle", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+                tab.addNumber("Driver Heading", () -> getDriveHeading().getDegrees());
+
                 break;
         }
     }
