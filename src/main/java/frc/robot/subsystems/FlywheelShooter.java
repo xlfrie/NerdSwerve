@@ -19,29 +19,33 @@ import frc.robot.Constants.FlywheelConstants;
 
 public class FlywheelShooter extends SubsystemBase {
 
-   ShuffleboardTab sbShooterTab = Shuffleboard.getTab("Flywheel Shooter");
-   GenericEntry sbBottomCurrentRPM = sbShooterTab.add("Bottom RPM", 0).withPosition(0, 0).getEntry();
-   GenericEntry sbTopCurrentRPM = sbShooterTab.add("Top RPM", 0).withPosition(1, 0).getEntry();
-   GenericEntry sbTopManualRPM = sbShooterTab.add("Top Manual RPM", 0).withPosition(0, 1).getEntry();
-   GenericEntry sbBottomManualRPM = sbShooterTab.add("Bottom Manual RPM", 0).withPosition(1, 1).getEntry();
-   GenericEntry sbTopManualPercent = sbShooterTab.add("Top Manual Percent", 0).withPosition(2, 1).getEntry();
-   GenericEntry sbBottomManualPercent = sbShooterTab.add("Bottom Manual Percent", 0).withPosition(3, 1).getEntry();
+  private ShuffleboardTab sbShooterTab = Shuffleboard.getTab("Flywheel Shooter");
+  private GenericEntry sbBottomCurrentRPM = sbShooterTab.add("Bottom RPM", 0).withPosition(0, 0).getEntry();
+  private GenericEntry sbTopCurrentRPM = sbShooterTab.add("Top RPM", 0).withPosition(1, 0).getEntry();
+  private GenericEntry sbTopManualRPM = sbShooterTab.add("Top Manual RPM", 0).withPosition(0, 1).getEntry();
+  private GenericEntry sbBottomManualRPM = sbShooterTab.add("Bottom Manual RPM", 0).withPosition(1, 1).getEntry();
+  private GenericEntry sbTopManualPercent = sbShooterTab.add("Top Manual Percent", 0).withPosition(2, 1).getEntry();
+  private GenericEntry sbBottomManualPercent = sbShooterTab.add("Bottom Manual Percent", 0).withPosition(3, 1).getEntry();
    
-   GenericEntry sbKp = sbShooterTab.add("kP", 0).withPosition(0, 2).getEntry();
-   GenericEntry sbKi = sbShooterTab.add("kI", 0).withPosition(1, 2).getEntry();
-   GenericEntry sbKd = sbShooterTab.add("kD", 0).withPosition(2, 2).getEntry();
-   GenericEntry sbKf = sbShooterTab.add("kF", 0).withPosition(3, 2).getEntry();
-   GenericEntry sbTunningPID = sbShooterTab.add("Tune PID", 0).withPosition(4, 2).getEntry();
+  private GenericEntry sbKp = sbShooterTab.add("kP", 0).withPosition(0, 2).getEntry();
+  private GenericEntry sbKi = sbShooterTab.add("kI", 0).withPosition(1, 2).getEntry();
+  private GenericEntry sbKd = sbShooterTab.add("kD", 0).withPosition(2, 2).getEntry();
+  private GenericEntry sbKf = sbShooterTab.add("kF", 0).withPosition(3, 2).getEntry();
+  private GenericEntry sbTunningPID = sbShooterTab.add("Tune PID", 0).withPosition(4, 2).getEntry();
 
 
 
-  CANSparkMax topFlywheelMotor;
-  CANSparkMax bottomFlywheelMotor;
+  private final CANSparkMax topFlywheelMotor;
+  private final CANSparkMax bottomFlywheelMotor;
+
+  private boolean troubleshooting;
 
   
 
   /** Creates a new FlywheelShooter. */
   public FlywheelShooter() {
+    troubleshooting = true;
+
     topFlywheelMotor = new CANSparkMax(FlywheelConstants.kTopShooterID, MotorType.kBrushless);
     topFlywheelMotor.restoreFactoryDefaults();
     topFlywheelMotor.setSmartCurrentLimit(50);
@@ -130,7 +134,7 @@ public class FlywheelShooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    if(troubleshooting){
     if (sbTunningPID.getDouble(0)==1){
       double kP = sbKp.getDouble(0);
       double kI = sbKi.getDouble(0);
@@ -140,6 +144,7 @@ public class FlywheelShooter extends SubsystemBase {
       configurePIDF(kP, kI, kD, kF);
 
     }
+  } 
 
     updateShuffleboard();
     // This method will be called once per scheduler run
