@@ -13,10 +13,17 @@ public class DriveTrainLEDs extends SubsystemBase {
     static int value = 255;
 
     //Variables for noise things
-    static int fluctuationRange = 10;
-    static double fluctuationRate = 0.1;
+    static int fluctuationRange = 15;
+    static double fluctuationRate = 0.01;
     static double offset = 0;
+    static double baseHue = 10;
+    static double hueChangeRate = 0;
 
+    //Hue Pulse Variables
+    int pulseColors[] = {10,100};
+    int pulseIndex = 0;
+    double updatePoint = 0.1;
+    double updateRate = 0.1;
 
     /** Creates a new LEDs. */
     public DriveTrainLEDs() {
@@ -52,17 +59,52 @@ public class DriveTrainLEDs extends SubsystemBase {
         return (range[1]-range[0]) * lerpVal + range[0];
     }
 
-    private double Remap(double startVal, double[] startRange, double[] endRange){
-        return (startVal-startRange[0]) * (endRange[1]-endRange[0]) / (startRange[1]- startRange[0]) + endRange[0];
-    }
-
-    private void solidNoiseFluctuation()
+    private int solidNoiseFluctuation()
     {
         double noiseVal = OpenSimplex.noise2_ImproveX(1934173838, 0, offset);
         noiseVal *= fluctuationRange;
         noiseVal += hue;
         noiseVal = (noiseVal + 181) % 181;
-        hue = (int)noiseVal;
+
+        offset += fluctuationRate;
+        if(Math.abs(offset) > 100000 ){ 
+            fluctuationRate *= -1;
+        }
+
+        return (int)noiseVal;
+    }
+
+    double cyclerCounter = 0;
+    private void colorCycler()
+    {
+        int change = 40;
+        double rate = 0.25;//smaller is faster
+        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+            m_ledBuffer.setHSV(i, hue, 255, value);
+            if(cyclerCounter/rate > i)
+            {
+                m_ledBuffer.setHSV(i, (hue+change)%181, 255, value);
+            }
+        }
+
+        cyclerCounter += 0.1;
+        if(cyclerCounter >= m_ledBuffer.getLength()*rate)
+        {
+            cyclerCounter = 0;
+            hue = (hue+change)%181;
+        }
+    }
+
+    private void noise(){
+        double scale = 0.05;
+        for (var x = 0; x < m_ledBuffer.getLength(); x++) {
+            double noiseVal = OpenSimplex.noise2_ImproveX(1934173838, x*scale, offset);
+            int h = (int)((baseHue + 181 + noiseVal * fluctuationRange) % 181);
+            m_ledBuffer.setHSV(x, h, 255, value);
+        }
+
+        // baseHue += hueChangeRate;
+        // baseHue %= 181;
 
         offset += fluctuationRate;
         if(Math.abs(offset) > 100000 ){ 
@@ -70,15 +112,21 @@ public class DriveTrainLEDs extends SubsystemBase {
         }
     }
 
+
     @Override
     public void periodic() {
         //Gives the hue color a bit of fluctuation using OpenSimplex noise
-        solidNoiseFluctuation();
+        // int h = solidNoiseFluctuation();
 
         //Set all LEDs to the hue color
-        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-            m_ledBuffer.setHSV(i, hue, 255, value);
-        }
+        // for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        //     m_ledBuffer.setHSV(i, hue, 255, value);
+        // }
+
+        // noise();
+        colorCycler();
         m_led.setData(m_ledBuffer);
+
+
     }
 }
