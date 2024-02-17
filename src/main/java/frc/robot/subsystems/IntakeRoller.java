@@ -22,19 +22,7 @@ public class IntakeRoller extends SubsystemBase {
   private final CANSparkMax intake;
   /** Creates a new IntakeRoller. */
 
-   ShuffleboardTab sbIntakeTab = Shuffleboard.getTab("Intake Roller");
-   GenericEntry sbCurrentRPM = sbIntakeTab.add("Current RPM", 0).withPosition(0, 0).getEntry();
-   GenericEntry sbTargettedRPM = sbIntakeTab.add("Targetted RPM", 0).withPosition(1, 0).getEntry();
-   GenericEntry sbCurrentVoltage = sbIntakeTab.add("Current Voltage", 0).withPosition(2, 0).getEntry();
-   GenericEntry sbCurrentTemperature = sbIntakeTab.add("Current Temperature", 0).withPosition(3, 0).getEntry();
-
-
-   GenericEntry sbKp = sbIntakeTab.add("kP", 0).withPosition(0, 2).getEntry();
-   GenericEntry sbKi =sbIntakeTab.add("kI", 0).withPosition(1, 2).getEntry();
-   GenericEntry sbKd = sbIntakeTab.add("kD", 0).withPosition(2, 2).getEntry();
-   GenericEntry sbKf =sbIntakeTab.add("kF", 0).withPosition(3, 2).getEntry();
-   GenericEntry sbTunningPID = sbIntakeTab.add("Tune PID", 0).withPosition(4, 2).getEntry();
-
+  
   private double targetRPM;
 
   private boolean troubleshooting;
@@ -55,7 +43,7 @@ public class IntakeRoller extends SubsystemBase {
     intake.getPIDController().setI(0);
     intake.getPIDController().setD(0);
     intake.getPIDController().setFF(0);
-
+    
 
   }
 
@@ -108,29 +96,29 @@ public class IntakeRoller extends SubsystemBase {
 
   public void updateShuffleboard(){
 
-    sbCurrentRPM.setDouble(getVelocityRPM());
-    sbCurrentVoltage.setDouble(getAppliedVoltage());
-    sbCurrentTemperature.setDouble(getTemperature());
+    // sbCurrentRPM.setDouble(getVelocityRPM());
+    // sbCurrentVoltage.setDouble(getAppliedVoltage());
+    // sbCurrentTemperature.setDouble(getTemperature());
 
     
 
   }
   @Override
   public void periodic() {
-      if (troubleshooting) {
-        if (sbTunningPID.getDouble(0)==1){
+      // if (troubleshooting) {
+      //   if (sbTunningPID.getDouble(0)==1){
           
-          double kP = sbKp.getDouble(0);
-          double kI = sbKi.getDouble(0);
-          double kD = sbKd.getDouble(0);
-          double kF = sbKf.getDouble(0);
+      //     double kP = sbKp.getDouble(0);
+      //     double kI = sbKi.getDouble(0);
+      //     double kD = sbKd.getDouble(0);
+      //     double kF = sbKf.getDouble(0);
           
-          configurePIDF(kP, kI, kD, kF);
+      //     configurePIDF(kP, kI, kD, kF);
 
 
-        }
+      //   }
 
-      }
+      // }
     // This method will be called once per scheduler run
   }
 }
