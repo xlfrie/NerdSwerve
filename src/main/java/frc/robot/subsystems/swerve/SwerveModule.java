@@ -159,8 +159,6 @@ public class SwerveModule{
         drivePIDConfigs.kD = kDDrive;
         drivePIDConfigs.kV = kVDrive;
         driveConfigurator.refresh(drivePIDConfigs);
-    
-      
         driveConfigurator.apply(drivePIDConfigs);
     }
 

@@ -5,10 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.flywheelshooter.FlywheelPercentage;
-import frc.robot.commands.flywheelshooter.FlywheelRPM;
 import frc.robot.commands.swerve.SwerveJoystickCommand;
-import frc.robot.subsystems.FlywheelShooter;
 import frc.robot.subsystems.GyroStuffs.PigeonV2;
 import frc.robot.subsystems.LEDs.DriveTrainLEDs;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
@@ -45,7 +42,6 @@ public class RobotContainer {
   private PigeonV2 gyro = new PigeonV2(0);
   private SwerveDriveTrain drive = new SwerveDriveTrain(gyro);
  
-  private FlywheelShooter flywheelShooter  = new FlywheelShooter();
   private DriveTrainLEDs dtLEDs = new DriveTrainLEDs();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -73,10 +69,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
-    driveAbutton.whileTrue(new FlywheelPercentage(flywheelShooter,0, true));
-    driveXbutton.whileTrue(new FlywheelRPM(flywheelShooter, true));
-    driveYbutton.whileTrue(new FlywheelPercentage(flywheelShooter, -1.0,false ));
-    driveBbutton.whileTrue(new FlywheelPercentage(flywheelShooter, 1.0,false ));
+
   }
   public void initShuffleboard() {
   drive.initModuleShuffleboard(1);

@@ -26,6 +26,11 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class SubSystemConfigs{
+
+    public static final boolean kEnableWrist = false;
+  }
+
 
   public static class DriveConstants {
     public static final double kDriveAlpha = 0.11765;
@@ -205,8 +210,35 @@ public final class Constants {
     public static final double kIShooter = 0;
     public static final double kDShooter = 0;
     public static final double kFShooter = 0;
+  }
+
+  public static final class WristConstants {
+
+    public static final int kWristMotorID = 0;
+    public static final int kWristThroughBoneEncoderID = 0;
 
 
+//Magic Motion Constants
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kF = 0;
+    public static final double kIz= 0;
+    public static final double kFF =0;
+    public static final double kMinOutput = 0;
+    public static final double kMaxOutput =0;
+    public static final double kMaxVelocity =0;
+    public static final double kMinVelocity=0;
+    public static final double kMaxAccel =0;
+    public static final double kAllowedError =0;
+
+
+//Through Bore Encoder Configs
+    public static final double kEncoderOffset =0;
+    public static final double kEncoderPositionToAngle =0;
+
+  //Preset Position
+    public static final double kStowPosition =0;
 
 
 
