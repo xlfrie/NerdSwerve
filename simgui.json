@@ -1,0 +1,12 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Swerve/Field Position": "Field2d",
+      "/Shuffleboard/Swerve/Toggle Test": "Command"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
