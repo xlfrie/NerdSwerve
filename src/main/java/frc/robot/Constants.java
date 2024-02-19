@@ -36,6 +36,15 @@ public final class Constants {
 
 
 
+    //Through Bore Encoder Configs
+    public static final double kEncoderOffset =0;
+    public static final double kEncoderPositionToAngle =0;
+
+  //Preset Position
+    public static final double kStowPosition =0;
+
+
+
   }
 
 
@@ -213,7 +222,6 @@ public final class Constants {
     public static final int kTopShooterID = 13;
     public static final int kBottomShooterID = 14;
 
-    public static final double kNeutralVelocity = 0;
 
     //Motor Constants
     public static final double kRotorToSensorRatio=0;
@@ -233,10 +241,45 @@ public final class Constants {
     public static final double kMaxOutput =0;
 
     public static final double kAllowedError= 0;
+
+    //Shooter Presets
+    public static final double kNeutralVelocity = 0;
+
   }
 
     public static final class ArmConstants {
-    public static final int kIndexerID =0;
+    
+    public static final int kLeftArmMotorID = 0;
+    public static final int kRightArmMotorID = 0;
+    public static final int kArmThroughBoneEncoderID = 0;
+
+    
+    //Motor Constants
+    public static final double kRotorToSensorRatio=0;
+    public static final double kOpenLoopRampRate =0;
+    public static final int kControlFramePeriod =0;
+    public static final int kEncoderControlFramePeriod =0;
+    public static final boolean kInverted =true;
+    public static final boolean kIdleBrake = true;
+
+    //PID Constants
+    public static final double kP =0;
+    public static final double kI =0;
+    public static final double kD =0;
+    public static final double kIz =0;
+    public static final double kF =0;
+    public static final double kMinOutput =0;
+    public static final double kMaxOutput =0;
+
+    //Smart Motion Constants
+    public static final double kMaxVelocity =0;
+    public static final double kMinVelocity=0;
+    public static final double kMaxAccel=0;
+    public static final double kAllowedError = 0;
+
+
+
+    
 
     }
   public static final class IndexerConstants {
@@ -317,4 +360,6 @@ public final class Constants {
     public static final double kStowPosition =0;
 
   }
+
+
 }

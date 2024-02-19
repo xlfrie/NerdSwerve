@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SubSystemConfigs;
 import frc.robot.Constants.WristConstants;
 import frc.robot.utils.CanController;
-import frc.robot.utils.TalonFXController;
 
 public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
@@ -46,22 +45,26 @@ public class Arm extends SubsystemBase {
   private final DutyCycleEncoder throughBore;
 
 
-  private boolean enabled = SubSystemConfigs.kEnableShooter;
+  private boolean enabled = SubSystemConfigs.kEnableArm;
   private double targetPosition = 0;  
   private boolean troubleshooting = true;
   private boolean smartMotionEnabled = true;
 
 
   public Arm() {
-    armLeftMotor = new CanController(0);
-    armLeftMotor.configureMotor( IntakeConstants.kRotorToSensorRatio, IntakeConstants.kOpenLoopRampRate, IntakeConstants.kControlFramePeriod, IntakeConstants.kEncoderControlFramePeriod, IntakeConstants.kInverted, IntakeConstants.kIdleBrake);
-    armLeftMotor.configurePIDF(targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition);
-    armLeftMotor.configureSmartMotion(targetPosition, targetPosition, targetPosition, targetPosition);
 
-    armRightMotor = new CanController(0);
-    armRightMotor.configureMotor( IntakeConstants.kRotorToSensorRatio, IntakeConstants.kOpenLoopRampRate, IntakeConstants.kControlFramePeriod, IntakeConstants.kEncoderControlFramePeriod, IntakeConstants.kInverted, IntakeConstants.kIdleBrake);
-    armRightMotor.configurePIDF(targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition);
-    armRightMotor.configureSmartMotion(targetPosition, targetPosition, targetPosition, targetPosition);
+    //double kMaxVelocity, double kMinVelocity, double kMaxAccel, double kAllowedError ){
+           
+    armLeftMotor = new CanController(ArmConstants.kLeftArmMotorID);
+    armLeftMotor.configureMotor( ArmConstants.kRotorToSensorRatio, ArmConstants.kOpenLoopRampRate, ArmConstants.kControlFramePeriod, ArmConstants.kEncoderControlFramePeriod, ArmConstants.kInverted, ArmConstants.kIdleBrake);
+    armLeftMotor.configurePIDF(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD, ArmConstants.kIz, ArmConstants.kF, ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
+;    armLeftMotor.configureSmartMotion(ArmConstants.kMaxVelocity, ArmConstants.kMinVelocity, ArmConstants.kMaxAccel, ArmConstants.kAllowedError);
+
+    armRightMotor = new CanController(ArmConstants.kRightArmMotorID);
+    armRightMotor.configureMotor( ArmConstants.kRotorToSensorRatio, ArmConstants.kOpenLoopRampRate, ArmConstants.kControlFramePeriod, ArmConstants.kEncoderControlFramePeriod, ArmConstants.kInverted, ArmConstants.kIdleBrake);
+    armRightMotor.configurePIDF(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD, ArmConstants.kIz, ArmConstants.kF, ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
+    armRightMotor.configureSmartMotion(ArmConstants.kMaxVelocity, ArmConstants.kMinVelocity, ArmConstants.kMaxAccel, ArmConstants.kAllowedError);
+
 
     throughBore = new DutyCycleEncoder(0);
     resetEncoder();
@@ -111,8 +114,12 @@ public class Arm extends SubsystemBase {
     }
 
     if (troubleshooting){
-      if (sbConfigurePID.getBoolean(false)){
+      if (sbConfigurePID.getDouble(0)==1){
         updatePIDFValueShuffleBoard();
+      }
+
+      if (sbConfigureMagicMotion.getDouble(0)==1){
+       updateMagicMotionValueShuffleBoard(); 
       }
     }
     // This method will be called once per scheduler run
@@ -220,8 +227,10 @@ public void updatePIDFValueShuffleBoard(){
   armRightMotor.configurePIDF(kP, kI, kD, kIzone, kF, kMinOut, kMaxOutput);
 
 
-    //double kMaxVelocity, double kMinVelocity, double kMaxAccel, double kAllowedError
 
+ 
+}
+public void updateMagicMotionValueShuffleBoard(){
   double kMaxVel = sbkMaxVelocity.getDouble(0);
   double kMinVel = sbkMinVelocity.getDouble(0);
   double kMaxAccel = sbkMaxAcceleration.getDouble(0);
@@ -229,6 +238,7 @@ public void updatePIDFValueShuffleBoard(){
   armLeftMotor.configureSmartMotion(kMaxVel, kMinVel, kMaxAccel, kAllowedError);
   armRightMotor.configureSmartMotion(kMaxVel, kMinVel, kMaxAccel, kAllowedError);
 }
+
 
 public void initShuffleboard(int level) {
   //Im dumb, so 0 = off, 1 = everything, 2 = medium, 3 = minimal
