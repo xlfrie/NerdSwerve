@@ -50,8 +50,20 @@ public class Wrist extends SubsystemBase {
   // private GenericEntry sbkMinVelocity = wristTab.add("Min Velocity", 0).withPosition(1, 2).getEntry();
   // private GenericEntry sbkMaxAccel = wristTab.add("Max Accel", 0).withPosition(2, 2).getEntry();
   // private GenericEntry sbkAllowedError = wristTab.add("Allowed Error", 0).withPosition(3, 2).getEntry();
-  
-
+     
+ private ShuffleboardTab wristTab = Shuffleboard.getTab("Wrist Troubleshooting");
+    private GenericEntry sbManualSpeedPercent = wristTab.add("Speed Percent In", 0).withPosition(0, 0).getEntry();
+    private GenericEntry sbManualTargetPosition = wristTab.add("Target Position In", 0).withPosition(1, 0).getEntry();
+    private GenericEntry sbkPIn = wristTab.add("kP In ", 0).withPosition(0, 1).getEntry();
+    private GenericEntry sbkIIn = wristTab.add("kI In ", 0).withPosition(1, 1).getEntry();
+    private GenericEntry sbkDIn = wristTab.add("kD In ", 0).withPosition(2, 1).getEntry();
+    private GenericEntry sbkVIn = wristTab.add("kV In", 0).withPosition(3, 1).getEntry();
+    private GenericEntry sbkSIn = wristTab.add("kS In", 0).withPosition(4, 1).getEntry();
+    private GenericEntry sbkAIn = wristTab.add("kA In", 0).withPosition(0, 2).getEntry();
+    private GenericEntry sbkGIn = wristTab.add("kG In", 0).withPosition(1, 2).getEntry();
+    private GenericEntry sbkCruiseVelocity = wristTab.add("Cruise Velocity", 0).withPosition(2, 2).getEntry();
+    private GenericEntry sbkAcceleration = wristTab.add("Acceleration", 0).withPosition(3, 2).getEntry();
+    private GenericEntry sbConfigurePID = wristTab.add("Configure PID", 0).withPosition(4, 2).getEntry();
 
 
   /** Creates a new Wrist. */
@@ -64,19 +76,16 @@ public class Wrist extends SubsystemBase {
 
   private double targetPosition = 0;
 
+
   public Wrist() {
+
     wristMotor = new TalonFXController(WristConstants.kWristMotorID);
-
-    wristMotor.configureMotor(targetPosition, targetPosition, targetPosition, smartMotionEnabled, enabled);
-    wristMotor.configurePIDF(targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition, targetPosition);
-    
-
+    wristMotor.configureMotor(WristConstants.kRotorToSensorRatio, WristConstants.kSensorToMechanismRatio, WristConstants.kDutyCycleNeutralDeadband, WristConstants.kInvertClockwise, WristConstants.kIdleBrake);
+    wristMotor.configurePIDF(WristConstants.kP, WristConstants.kI, WristConstants.kD, WristConstants.kV, WristConstants.kS, WristConstants.kA, WristConstants.kG, WristConstants.kCruiseVel, WristConstants.kAccel);
     throughBore = new DutyCycleEncoder(WristConstants.kWristThroughBoneEncoderID);
-  
     
-
-
     resetEncoder();
+
   
   }
 
@@ -85,6 +94,7 @@ public class Wrist extends SubsystemBase {
     throughBore.setPositionOffset(WristConstants.kEncoderOffset);    
     wristMotor.setPosition(getAbsolutePosition());
   }
+
 
   public void zeroAbsoluteEncoder(){
     throughBore.setPositionOffset(throughBore.getAbsolutePosition());
@@ -101,18 +111,25 @@ public class Wrist extends SubsystemBase {
     
     if (enabled) {
       if (smartMotionEnabled){
-        wristMotor.getPIDController().setReference(targetPosition, ControlType.kSmartMotion);
+        wristMotor.setSmartMotionPositionControl(targetPosition);
       }
       else{
-        wristMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
+        wristMotor.setPositionControl(targetPosition);
       }
     } 
-  else {
+  
+    else {
       if (troubleshooting){
         return;
       }
       else{
         stop();
+      }
+    }
+
+    if (troubleshooting){
+      if (sbConfigurePID.getDouble(0)==1){
+        updatePIDFValueShuffleBoard();
       }
     }
   }
@@ -156,11 +173,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAppliedVoltage(){
-    return wristMotor.getAppliedOutput();
-  }
-
-  public double getMotorTemperature(){
-    return wristMotor.getMotorTemperature();
+    return wristMotor.getMotorVoltage();
   }
 
   public double getCurrentError(){
@@ -189,43 +202,46 @@ public Command incrementPositionCommand(double increment) {
   
       //****************************** MANUAL METHODS ******************************//
   public void setPercentage(double per){
-    wristMotor.set(per);
+    wristMotor.setSpeed(per);
   }
 
   public void setPercentageShuffleBoard(){
     double speed = sbManualSpeedPercent.getDouble(0);
     setPercentage(speed);
+    setEnabled(false);
   }
 
   public void setPositionShuffleBoard(){
     double targetPosition = sbManualTargetPosition.getDouble(0);
     setTargetPosition(targetPosition);
+    setEnabled(true);
   }
 
   public void updatePIDFValueShuffleBoard(){
+
+    //reserved for can
+    // double kP = sbkPIn.getDouble(0);
+    // double kI = sbkIIn.getDouble(0);
+    // double kD = sbkDIn.getDouble(0);
+    // double kIzone = sbkIZoneIn.getDouble(0);
+    // double kF = sbkFIn.getDouble(0);
+    // double kMinOut = sbkMinOut.getDouble(0);
+    // double kMaxOutput = sbkMaxOut.getDouble(0);
+
     double kP = sbkPIn.getDouble(0);
     double kI = sbkIIn.getDouble(0);
     double kD = sbkDIn.getDouble(0);
-    double kIzone = sbkIZoneIn.getDouble(0);
-    double kF = sbkFIn.getDouble(0);
-    double kMinOut = sbkMinOut.getDouble(0);
-    double kMaxOutput = sbkMaxOut.getDouble(0);
-
-    configurePIDF(kP, kI, kD, kF, kIzone, kF, kMinOut, kMaxOutput);
+    double kV = sbkVIn.getDouble(0);
+    double kS = sbkSIn.getDouble(0);
+    double kA =  sbkAIn.getDouble(0);
+    double kG =  sbkGIn.getDouble(0);
+    double kCruiseVelocity =  sbkCruiseVelocity.getDouble(0);
+    double kAcceleration =  sbkAcceleration.getDouble(0);
+    wristMotor.configurePIDF(kP, kI, kD, kV, kS, kA, kG, kCruiseVelocity, kAcceleration);
   }
 
   
-  public void updateSmartMotionValueShuffleBoard(){
-    double kMaxVelocity = sbkMaxVelocity.getDouble(0);
-    double kMinVelocity = sbkMinVelocity.getDouble(0);
-    double kMaxAccel = sbkMaxAccel.getDouble(0);
-    double kAllowedError = sbkAllowedError.getDouble(0);
 
-    configureSmartMotion(kMaxVelocity, kMinVelocity, kMaxAccel, kAllowedError);
-  }
-
-
-  
 
   public void initShuffleboard(int level) {
     //Im dumb, so 0 = off, 1 = everything, 2 = medium, 3 = minimal
@@ -238,21 +254,20 @@ public Command incrementPositionCommand(double increment) {
         case 0:
           break;
         case 1:
-
-          tab.addNumber("kP", ()-> wristMotor.getPIDController().getP());
-          tab.addNumber("kI", ()-> wristMotor.getPIDController().getP());
-          tab.addNumber("kD", ()-> wristMotor.getPIDController().getP());
-          tab.addNumber("kIZ", ()->wristMotor.getPIDController().getP());
-          tab.addNumber("kF", ()-> wristMotor.getPIDController().getP());
-          tab.addNumber("kMaxVel", ()-> wristMotor.getPIDController().getSmartMotionMaxVelocity(0));
-          tab.addNumber("kMinVel", ()-> wristMotor.getPIDController().getSmartMotionMinOutputVelocity(0));
-          tab.addNumber("kMaxAccel", ()-> wristMotor.getPIDController().getSmartMotionMaxAccel(0));
-          tab.addNumber("kAllowedError", ()-> wristMotor.getPIDController().getSmartMotionAllowedClosedLoopError(0));
+     
+          tab.addNumber("kP", ()-> wristMotor.getMotorConfig().kP);
+          tab.addNumber("kI", ()-> wristMotor.getMotorConfig().kI);
+          tab.addNumber("kD", ()-> wristMotor.getMotorConfig().kD);
+          tab.addNumber("kV", ()-> wristMotor.getMotorConfig().kV);
+          tab.addNumber("kS", ()-> wristMotor.getMotorConfig().kS);
+          tab.addNumber("kA", ()-> wristMotor.getMotorConfig().kA);
+          tab.addNumber("kG", ()-> wristMotor.getMotorConfig().kG);
+          tab.addNumber("kAccel", ()-> wristMotor.getMagicMotionMotorConfig().MotionMagicAcceleration);
+          tab.addNumber("kCruiseVel", ()->  wristMotor.getMagicMotionMotorConfig().MotionMagicCruiseVelocity);
           tab.addString("Current Command", () -> this.getCurrentCommand() == null ? "None" : this.getCurrentCommand().getName());
 
         case 2:
           tab.addNumber("Absolute Position", () -> getAbsolutePosition());
-          tab.addNumber("Temperature", () -> getMotorTemperature());
           tab.addNumber("Current Error", () -> getCurrentError());
 
         case 3:

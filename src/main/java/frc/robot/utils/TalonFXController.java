@@ -7,6 +7,7 @@ package frc.robot.utils;
 import org.opencv.core.Point;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -32,6 +33,7 @@ public class TalonFXController {
     private MotionMagicVoltage motionMagicRequest;
     private VelocityVoltage motorVelocityRequest;
     private PositionVoltage motorPositionRequest;
+    private TalonFXConfiguration motorConfigs;
 
     private DutyCycleOut motorRequest;
     private Slot0Configs motorPIDConfigs;
@@ -51,11 +53,14 @@ public class TalonFXController {
         this.motorPIDConfigs = new Slot0Configs();
         this.motorConfigurator.refresh(motorPIDConfigs);
         this.brakeRequest = new NeutralOut();
+        
+
 
 
         
 
     }
+
 
     public void configureMotor(double rotorToSensorRatio, double sensorToMechanismRatio,double dutyCycleNeutralDeadband, boolean invertClockwise, boolean idleBrake ) {
         TalonFXConfiguration motorConfigs = new TalonFXConfiguration();
@@ -96,7 +101,6 @@ public class TalonFXController {
     }
 
     public void configurePIDF(double kP, double kI, double kD, double kV, double kS, double kA, double kG, double cruiseVel, double accel){
-        TalonFXConfiguration motorConfigs = new TalonFXConfiguration();
         motorConfigurator.refresh(motorConfigs);
         motorConfigs.Slot0.kP = kP;
         motorConfigs.Slot0.kI = kI;
@@ -107,11 +111,12 @@ public class TalonFXController {
         motorConfigs.Slot0.kG = kG;
         motorConfigs.MotionMagic.MotionMagicCruiseVelocity = cruiseVel;
         motorConfigs.MotionMagic.MotionMagicAcceleration   = accel;
-
         StatusCode configStatusCode = motorConfigurator.apply(motorConfigs);
         if (!configStatusCode.isOK()){
             DriverStation.reportError("Could not apply motor configs, error code:"+ configStatusCode.toString(), new Error().getStackTrace());
         }
+
+        
     }
 
     //Encoder and logging stuffs
@@ -154,6 +159,18 @@ public class TalonFXController {
     public void setSmartMotionPositionControl(double position){
         motionMagicRequest.Position = position;
         motor.setControl(motionMagicRequest.withPosition(position));
+    }
+
+    public Slot0Configs getMotorConfig(){
+        return motorPIDConfigs;
+    }
+
+      public MotionMagicConfigs getMagicMotionMotorConfig(){
+        return motorConfigs.MotionMagic;
+    }
+
+    public void initlializeShuffleboard(){
+
     }
 
 

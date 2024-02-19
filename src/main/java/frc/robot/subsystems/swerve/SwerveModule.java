@@ -26,9 +26,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -371,11 +373,13 @@ public class SwerveModule{
         }
         int moduleId = driveMotorID  ;
         ShuffleboardTab tab = Shuffleboard.getTab("Module " + moduleId);
+        
 
         switch (level) {
             case 0:
                 break;
             case 1:
+
                 tab.addNumber("Turn percent (motor controller)", () -> turnMotor.getAppliedOutput());
                 tab.addNumber("Turn percent (current)", () -> this.currentTurnPercent);
             case 2:

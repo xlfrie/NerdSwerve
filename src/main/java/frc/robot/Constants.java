@@ -29,6 +29,13 @@ public final class Constants {
   public static class SubSystemConfigs{
 
     public static final boolean kEnableWrist = false;
+    public static final boolean kEnableShooter = false;
+    public static final boolean kEnableIntake = false;
+    public static final boolean kEnableIndexer = false;
+    public static final boolean kEnableArm = false;
+
+
+
   }
 
 
@@ -206,31 +213,100 @@ public final class Constants {
     public static final int kTopShooterID = 13;
     public static final int kBottomShooterID = 14;
 
-    public static final double kPShooter = 0;
-    public static final double kIShooter = 0;
-    public static final double kDShooter = 0;
-    public static final double kFShooter = 0;
+    public static final double kNeutralVelocity = 0;
+
+    //Motor Constants
+    public static final double kRotorToSensorRatio=0;
+    public static final double kOpenLoopRampRate =0;
+    public static final int kControlFramePeriod =0;
+    public static final int kEncoderControlFramePeriod =0;
+    public static final boolean kInverted =true;
+    public static final boolean kIdleBrake = true;
+   
+   //PID Constants
+    public static final double kP =0;
+    public static final double kI =0;
+    public static final double kD =0;
+    public static final double kIz =0;
+    public static final double kF =0;
+    public static final double kMinOutput =0;
+    public static final double kMaxOutput =0;
+
+    public static final double kAllowedError= 0;
   }
+
+    public static final class ArmConstants {
+    public static final int kIndexerID =0;
+
+    }
+  public static final class IndexerConstants {
+    
+    public static final int kIndexerID = 13;
+
+      //Motor Constants
+    public static final double kRotorToSensorRatio=0;
+    public static final double kOpenLoopRampRate =0;
+    public static final int kControlFramePeriod =0;
+    public static final int kEncoderControlFramePeriod =0;
+    public static final boolean kInverted =true;
+    public static final boolean kIdleBrake = true;
+   
+   //PID Constants
+    public static final double kP =0;
+    public static final double kI =0;
+    public static final double kD =0;
+    public static final double kIz =0;
+    public static final double kF =0;
+    public static final double kMinOutput =0;
+    public static final double kMaxOutput =0;
+
+    public static final double kAllowedError= 0;
+
+
+  } 
+
+   public static final class IntakeConstants {
+    
+    public static final int kIntakeID = 0;
+
+    //Motor Constants
+    public static final double kRotorToSensorRatio=0;
+    public static final double kOpenLoopRampRate =0;
+    public static final int kControlFramePeriod =0;
+    public static final int kEncoderControlFramePeriod =0;
+    public static final boolean kInverted =true;
+    public static final boolean kIdleBrake = true;
+   
+
+  } 
+
 
   public static final class WristConstants {
 
     public static final int kWristMotorID = 0;
     public static final int kWristThroughBoneEncoderID = 0;
 
+    public static final double kAllowedError = 3;
+
+//Motor Config
+    public static final double kRotorToSensorRatio = 0;
+    public static final double kSensorToMechanismRatio =0;
+    public static final double kDutyCycleNeutralDeadband = 0;
+    public static final boolean kInvertClockwise = true;
+    public static final boolean kIdleBrake = true;
 
 //Magic Motion Constants
+//double kP, double kI, double kD, double kV, double kS, double kA, double kG, double cruiseVel, double accel
     public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kF = 0;
-    public static final double kIz= 0;
-    public static final double kFF =0;
-    public static final double kMinOutput = 0;
-    public static final double kMaxOutput =0;
-    public static final double kMaxVelocity =0;
-    public static final double kMinVelocity=0;
-    public static final double kMaxAccel =0;
-    public static final double kAllowedError =0;
+    public static final double kV = 0;
+    public static final double kS= 0;
+    public static final double kA =0;
+    public static final double kG = 0;
+    public static final double kCruiseVel =0;
+    public static final double kAccel =0;
+
 
 
 //Through Bore Encoder Configs
@@ -239,8 +315,6 @@ public final class Constants {
 
   //Preset Position
     public static final double kStowPosition =0;
-
-
 
   }
 }

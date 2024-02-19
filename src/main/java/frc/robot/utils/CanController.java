@@ -6,13 +6,21 @@ package frc.robot.utils;
 
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /** Add your docs here. */
 
 public class CanController {
+
+      
+
       private CANSparkMax motor;
       
       public CanController(int motorid){
@@ -21,7 +29,7 @@ public class CanController {
 
       }
 
-      public void configureMotor(boolean inverted,boolean idleBrake,double rotorToSensorRatio, double openLoopRampRate, int controlFramePeriod, int encoderControlFramePeriod){
+      public void configureMotor(double rotorToSensorRatio, double openLoopRampRate, int controlFramePeriod, int encoderControlFramePeriod,boolean inverted,boolean idleBrake){
             motor.restoreFactoryDefaults();
             motor.setSmartCurrentLimit(50);
 
@@ -42,20 +50,15 @@ public class CanController {
             motor.getEncoder().setVelocityConversionFactor(rotorToSensorRatio);
       }
 
-      public void configurePIDF(double kP, double kI, double kD, double kF, double kIz, double kFF, double kMinOutput, double kMaxOutput){
+      public void configurePIDF(double kP, double kI, double kD, double kIz, double kF, double kMinOutput, double kMaxOutput){
        
             motor.getPIDController().setP(kP);
             motor.getPIDController().setI(kI);
             motor.getPIDController().setD(kD);
             motor.getPIDController().setIZone(0);
-            motor.getPIDController().setFF(kFF);
+            motor.getPIDController().setFF(kF);
             motor.getPIDController().setOutputRange(0, 0.9);
-        
-            int smartMotionSlot = 0;
-            motor.getPIDController().setSmartMotionMaxVelocity(0, smartMotionSlot);;
-            motor.getPIDController().setSmartMotionMinOutputVelocity(0, smartMotionSlot);
-            motor.getPIDController().setSmartMotionMaxAccel(0, smartMotionSlot);
-            motor.getPIDController().setSmartMotionAllowedClosedLoopError(0, smartMotionSlot);
+
           
           }
         
@@ -65,6 +68,7 @@ public class CanController {
             motor.getPIDController().setSmartMotionMinOutputVelocity(kMinVelocity, smartMotionSlot);
             motor.getPIDController().setSmartMotionMaxAccel(kMaxAccel, smartMotionSlot);
             motor.getPIDController().setSmartMotionAllowedClosedLoopError(kAllowedError, smartMotionSlot);
+            
           }
 
            //Encoder and logging stuffs
@@ -82,6 +86,10 @@ public class CanController {
 
   public double getMotorVoltage(){
       return motor.getAppliedOutput();
+  }
+
+  public double getCompensationVoltage(){
+      return motor.getVoltageCompensationNominalVoltage();
   }
 
   //Set Speed Stuffs
@@ -105,7 +113,14 @@ public class CanController {
       motor.getPIDController().setReference(position, ControlType.kSmartMotion);
   }
 
+  public SparkPIDController getPIDController(){
+      return motor.getPIDController();
+  }
 
+
+  public void updateShuffleboard(){
+      
+}
 
 
 }
