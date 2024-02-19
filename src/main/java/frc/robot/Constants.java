@@ -113,10 +113,10 @@ public final class Constants {
     public static final int kBLDriveID = 26;
     public static final int kBRDriveID = 28;
 
-    public static final int kFRTurningID = 8;
-    public static final int kFLTurningID = 10;
-    public static final int kBLTurningID = 6;
-    public static final int kBRTurningID = 12;
+    public static final int kFRTurningID = 22;
+    public static final int kFLTurningID = 23;
+    public static final int kBLTurningID = 21;
+    public static final int kBRTurningID = 24;
 
     public static final boolean kFRTurningReversed = false;
     public static final boolean kFLTurningReversed = false; 
@@ -219,8 +219,8 @@ public final class Constants {
 
   public static final class FlywheelConstants {
 
-    public static final int kTopShooterID = 13;
-    public static final int kBottomShooterID = 14;
+    public static final int kTopShooterID = 2;
+    public static final int kBottomShooterID = 3;
 
 
     //Motor Constants
@@ -249,9 +249,11 @@ public final class Constants {
 
     public static final class ArmConstants {
     
-    public static final int kLeftArmMotorID = 0;
-    public static final int kRightArmMotorID = 0;
-    public static final int kArmThroughBoneEncoderID = 0;
+    public static final int kLeftArmMotorID = 5;
+    public static final int kRightArmMotorID = 4;
+    public static final int kArmThroughBoneEncoderAID = 9;
+    public static final int kArmThroughBoneEncoderID = 8;
+
 
     
     //Motor Constants
@@ -310,7 +312,7 @@ public final class Constants {
 
    public static final class IntakeConstants {
     
-    public static final int kIntakeID = 0;
+    public static final int kIntakeID = 1;
 
     //Motor Constants
     public static final double kRotorToSensorRatio=0;
@@ -327,7 +329,9 @@ public final class Constants {
   public static final class WristConstants {
 
     public static final int kWristMotorID = 0;
-    public static final int kWristThroughBoneEncoderID = 0;
+    public static final int kWristThroughBoneEncoderAID = 7;
+    public static final int kWristThroughBoneEncoderBID = 6;
+
 
     public static final double kAllowedError = 3;
 

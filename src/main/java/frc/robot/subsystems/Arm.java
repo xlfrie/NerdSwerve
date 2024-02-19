@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,7 +43,7 @@ public class Arm extends SubsystemBase {
   private final CanController armLeftMotor;
   private final CanController armRightMotor;
 
-  private final DutyCycleEncoder throughBore;
+  private final Encoder throughBore;
 
 
   private boolean enabled = SubSystemConfigs.kEnableArm;
@@ -66,20 +67,17 @@ public class Arm extends SubsystemBase {
     armRightMotor.configureSmartMotion(ArmConstants.kMaxVelocity, ArmConstants.kMinVelocity, ArmConstants.kMaxAccel, ArmConstants.kAllowedError);
 
 
-    throughBore = new DutyCycleEncoder(0);
+    throughBore = new Encoder(7, 6);
     resetEncoder();
   }
 
   public void resetEncoder(){
-    throughBore.setPositionOffset(WristConstants.kEncoderOffset);    
-    armLeftMotor.setPosition(getAbsolutePosition());
-    armRightMotor.setPosition(getAbsolutePosition());
+    throughBore.reset();
+    armLeftMotor.setPosition(0);
+    armRightMotor.setPosition(0);
   }
 
   
-  public void zeroAbsoluteEncoder(){
-    throughBore.setPositionOffset(throughBore.getAbsolutePosition());
-  }
 
   public void stop(){
     armRightMotor.stop();
@@ -138,7 +136,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return throughBore.getAbsolutePosition() - throughBore.getPositionOffset();
+    return throughBore.getRaw();
   }
 
   public boolean hasReachedPosition(double position){

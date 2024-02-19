@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swerve.SwerveJoystickCommand;
 import frc.robot.subsystems.GyroStuffs.PigeonV2;
+import frc.robot.subsystems.LEDs.AboveBumperLEDs;
 import frc.robot.subsystems.LEDs.DriveTrainLEDs;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
@@ -43,6 +44,7 @@ public class RobotContainer {
   private SwerveDriveTrain drive = new SwerveDriveTrain(gyro);
  
   private DriveTrainLEDs dtLEDs = new DriveTrainLEDs();
+  private AboveBumperLEDs abLEDs = new AboveBumperLEDs();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

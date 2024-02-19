@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.PubSub;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -68,7 +69,8 @@ public class Wrist extends SubsystemBase {
 
   /** Creates a new Wrist. */
   private final TalonFXController wristMotor;
-  private final DutyCycleEncoder throughBore;
+  private final Encoder throughBore;
+  
 
   //I think the wrist runnin
   private boolean enabled = SubSystemConfigs.kEnableWrist;
@@ -82,8 +84,8 @@ public class Wrist extends SubsystemBase {
     wristMotor = new TalonFXController(WristConstants.kWristMotorID);
     wristMotor.configureMotor(WristConstants.kRotorToSensorRatio, WristConstants.kSensorToMechanismRatio, WristConstants.kDutyCycleNeutralDeadband, WristConstants.kInvertClockwise, WristConstants.kIdleBrake);
     wristMotor.configurePIDF(WristConstants.kP, WristConstants.kI, WristConstants.kD, WristConstants.kV, WristConstants.kS, WristConstants.kA, WristConstants.kG, WristConstants.kCruiseVel, WristConstants.kAccel);
-    throughBore = new DutyCycleEncoder(WristConstants.kWristThroughBoneEncoderID);
-    
+    throughBore = new Encoder(9, 8);
+  
     resetEncoder();
 
   
@@ -91,14 +93,11 @@ public class Wrist extends SubsystemBase {
 
 
   public void resetEncoder(){
-    throughBore.setPositionOffset(WristConstants.kEncoderOffset);    
-    wristMotor.setPosition(getAbsolutePosition());
+    throughBore.reset();
+    wristMotor.setPosition(0);
   }
 
 
-  public void zeroAbsoluteEncoder(){
-    throughBore.setPositionOffset(throughBore.getAbsolutePosition());
-  }
 
   public void stop(){
     wristMotor.stop();
@@ -147,7 +146,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return throughBore.getAbsolutePosition() - throughBore.getPositionOffset();
+    return throughBore.getRaw();
   }
 
   public boolean hasReachedPosition(double position){
