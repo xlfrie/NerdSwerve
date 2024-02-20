@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
+
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -43,13 +45,13 @@ public class Arm extends SubsystemBase {
   private final CanController armLeftMotor;
   private final CanController armRightMotor;
 
-  private final Encoder throughBore;
+  private final Encoder throughbore;
 
 
   private boolean enabled = SubSystemConfigs.kEnableArm;
   private double targetPosition = 0;  
   private boolean troubleshooting = true;
-  private boolean smartMotionEnabled = true;
+  private boolean smartMotionEnabled = false;
 
 
   public Arm() {
@@ -57,24 +59,27 @@ public class Arm extends SubsystemBase {
     //double kMaxVelocity, double kMinVelocity, double kMaxAccel, double kAllowedError ){
            
     armLeftMotor = new CanController(ArmConstants.kLeftArmMotorID);
-    armLeftMotor.configureMotor( ArmConstants.kRotorToSensorRatio, ArmConstants.kOpenLoopRampRate, ArmConstants.kControlFramePeriod, ArmConstants.kEncoderControlFramePeriod, ArmConstants.kInverted, ArmConstants.kIdleBrake);
+    armLeftMotor.configureMotor( ArmConstants.kRotorToSensorRatio, ArmConstants.kOpenLoopRampRate, ArmConstants.kControlFramePeriod, ArmConstants.kEncoderControlFramePeriod, ArmConstants.kLeftInverted, ArmConstants.kIdleBrake);
     armLeftMotor.configurePIDF(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD, ArmConstants.kIz, ArmConstants.kF, ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 ;    armLeftMotor.configureSmartMotion(ArmConstants.kMaxVelocity, ArmConstants.kMinVelocity, ArmConstants.kMaxAccel, ArmConstants.kAllowedError);
 
     armRightMotor = new CanController(ArmConstants.kRightArmMotorID);
-    armRightMotor.configureMotor( ArmConstants.kRotorToSensorRatio, ArmConstants.kOpenLoopRampRate, ArmConstants.kControlFramePeriod, ArmConstants.kEncoderControlFramePeriod, ArmConstants.kInverted, ArmConstants.kIdleBrake);
+    armRightMotor.configureMotor( ArmConstants.kRotorToSensorRatio, ArmConstants.kOpenLoopRampRate, ArmConstants.kControlFramePeriod, ArmConstants.kEncoderControlFramePeriod, ArmConstants.kRightInverted, ArmConstants.kIdleBrake);
     armRightMotor.configurePIDF(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD, ArmConstants.kIz, ArmConstants.kF, ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
     armRightMotor.configureSmartMotion(ArmConstants.kMaxVelocity, ArmConstants.kMinVelocity, ArmConstants.kMaxAccel, ArmConstants.kAllowedError);
 
 
-    throughBore = new Encoder(7, 6);
+    throughbore = new Encoder(7, 6);
     resetEncoder();
   }
 
   public void resetEncoder(){
-    throughBore.reset();
     armLeftMotor.setPosition(0);
     armRightMotor.setPosition(0);
+  }
+
+  public void zeroaAbsoluteEncoder(){
+    throughbore.reset();
   }
 
   
@@ -89,7 +94,7 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if (enabled) {
+    if (getEnabled()) {
       if (smartMotionEnabled){
         armLeftMotor.setSmartMotionPositionControl(targetPosition);
         armRightMotor.setSmartMotionPositionControl(targetPosition);
@@ -136,7 +141,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return throughBore.getRaw();
+    return throughbore.getRaw();
   }
 
   public boolean hasReachedPosition(double position){
@@ -144,11 +149,16 @@ public class Arm extends SubsystemBase {
       return true;
     }
     else{
+
       return false;
     }
   }
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+}
+
+public boolean getEnabled(){
+  return this.enabled;
 }
   public void setEnabledSmartMotion(boolean enabled){
     this.smartMotionEnabled = enabled;
@@ -194,6 +204,9 @@ setTargetPosition(WristConstants.kStowPosition);
 public void setPercentage(double per){
   armLeftMotor.setSpeed(per);
   armRightMotor.setSpeed(per);
+
+
+
 
 }
 
@@ -243,7 +256,7 @@ public void initShuffleboard(int level) {
   if (level == 0)  {
       return;
   }
-  ShuffleboardTab tab = Shuffleboard.getTab("Wrist");
+  ShuffleboardTab tab = Shuffleboard.getTab("Arms");
 
   switch (level) {
       case 0:
@@ -255,6 +268,9 @@ public void initShuffleboard(int level) {
       case 2:
         tab.addNumber("Absolute Position", () -> getAbsolutePosition());
         tab.addNumber("Current Error", () -> getCurrentError());
+        tab.addBoolean("Enable Arm PID", () -> getEnabled());
+
+
 
       case 3:
         tab.addNumber("Left Turn percent (motor controller)", () -> getLeftAppliedVoltage());

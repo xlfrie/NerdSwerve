@@ -40,8 +40,7 @@ public class TalonFXController {
 
     public TalonFXController(int motorID){
         this.motor = new TalonFX(motorID);
-        this.motorConfigurator = motor.getConfigurator();
-
+        this.motorConfigurator = this.motor.getConfigurator();
         this.motorRequest = new DutyCycleOut(0);
 
         this.motorVelocityRequest = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
@@ -50,8 +49,6 @@ public class TalonFXController {
         this.motionMagicRequest = new MotionMagicVoltage(0, true, 0, 0, false, false, false);
         this.motionMagicRequest.Slot = 0;
 
-        this.motorPIDConfigs = new Slot0Configs();
-        this.motorConfigurator.refresh(motorPIDConfigs);
         this.brakeRequest = new NeutralOut();
         
 
@@ -96,12 +93,15 @@ public class TalonFXController {
 
         StatusCode motorStatus = motorConfigurator.apply(motorConfigs);
         if (!motorStatus.isOK()){
-            DriverStation.reportError("Could not apply pivot configs, error code:"+ motorConfigs.toString(), new Error().getStackTrace());
+            DriverStation.reportError("Could not apply  configs, error code:"+ motorConfigs.toString(), new Error().getStackTrace());
         }
     }
 
     public void configurePIDF(double kP, double kI, double kD, double kV, double kS, double kA, double kG, double cruiseVel, double accel){
-        motorConfigurator.refresh(motorConfigs);
+        Slot0Configs motorPIDConfigs = new Slot0Configs();
+        TalonFXConfiguration motorConfigs = new TalonFXConfiguration();
+
+        motorConfigurator.refresh(motorPIDConfigs);
         motorConfigs.Slot0.kP = kP;
         motorConfigs.Slot0.kI = kI;
         motorConfigs.Slot0.kD = kD;
@@ -143,6 +143,8 @@ public class TalonFXController {
     public void setSpeed(double percent){
         motorRequest.Output = percent;
         motor.setControl(motorRequest);
+
+        //motor.set(percent);
     }  
 
     //PID Stuffs

@@ -261,17 +261,19 @@ public final class Constants {
     public static final double kOpenLoopRampRate =0;
     public static final int kControlFramePeriod =0;
     public static final int kEncoderControlFramePeriod =0;
-    public static final boolean kInverted =true;
+    public static final boolean kLeftInverted =true;
+        public static final boolean kRightInverted =false;
+
     public static final boolean kIdleBrake = true;
 
     //PID Constants
-    public static final double kP =0;
+    public static final double kP =0.1;
     public static final double kI =0;
     public static final double kD =0;
     public static final double kIz =0;
     public static final double kF =0;
-    public static final double kMinOutput =0;
-    public static final double kMaxOutput =0;
+    public static final double kMinOutput =-1;
+    public static final double kMaxOutput =1;
 
     //Smart Motion Constants
     public static final double kMaxVelocity =0;
@@ -328,7 +330,7 @@ public final class Constants {
 
   public static final class WristConstants {
 
-    public static final int kWristMotorID = 0;
+    public static final int kWristMotorID = 31;
     public static final int kWristThroughBoneEncoderAID = 7;
     public static final int kWristThroughBoneEncoderBID = 6;
 
@@ -336,15 +338,15 @@ public final class Constants {
     public static final double kAllowedError = 3;
 
 //Motor Config
-    public static final double kRotorToSensorRatio = 0;
-    public static final double kSensorToMechanismRatio =0;
-    public static final double kDutyCycleNeutralDeadband = 0;
+    public static final double kRotorToSensorRatio = 1;
+    public static final double kSensorToMechanismRatio =1;
+    public static final double kDutyCycleNeutralDeadband = 0.01;
     public static final boolean kInvertClockwise = true;
     public static final boolean kIdleBrake = true;
 
 //Magic Motion Constants
 //double kP, double kI, double kD, double kV, double kS, double kA, double kG, double cruiseVel, double accel
-    public static final double kP = 0;
+    public static final double kP = 0.01;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kV = 0;

@@ -5,6 +5,7 @@
 package frc.robot.utils;
 
 import com.fasterxml.jackson.databind.BeanProperty;
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -40,14 +41,14 @@ public class CanController {
             motor.setIdleMode(IdleMode.kCoast);
 
             }
-            motor.setOpenLoopRampRate(openLoopRampRate);
+          //  motor.setOpenLoopRampRate(openLoopRampRate);
             motor.setInverted(inverted);
-            motor.setControlFramePeriodMs(controlFramePeriod);
+          //  motor.setControlFramePeriodMs(controlFramePeriod);
             
             //Encoder Stuffs
-            motor.getEncoder().setMeasurementPeriod(encoderControlFramePeriod);
-            motor.getEncoder().setPositionConversionFactor(rotorToSensorRatio);
-            motor.getEncoder().setVelocityConversionFactor(rotorToSensorRatio);
+           // motor.getEncoder().setMeasurementPeriod(encoderControlFramePeriod);
+           // motor.getEncoder().setPositionConversionFactor(rotorToSensorRatio);
+           // motor.getEncoder().setVelocityConversionFactor(rotorToSensorRatio);
       }
 
       public void configurePIDF(double kP, double kI, double kD, double kIz, double kF, double kMinOutput, double kMaxOutput){
@@ -55,9 +56,10 @@ public class CanController {
             motor.getPIDController().setP(kP);
             motor.getPIDController().setI(kI);
             motor.getPIDController().setD(kD);
-            motor.getPIDController().setIZone(0);
+            motor.getPIDController().setIZone(kIz);
             motor.getPIDController().setFF(kF);
-            motor.getPIDController().setOutputRange(0, 0.9);
+            motor.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
+            
 
           
           }
@@ -75,6 +77,11 @@ public class CanController {
     public double getPosition(){
       return motor.getEncoder().getPosition();
   }
+    public double getAbsolutePosition(){
+        return motor.getAbsoluteEncoder().getPosition();
+    }
+
+  
 
   public double getVelocity(){
       return motor.getEncoder().getVelocity();
@@ -102,15 +109,16 @@ public class CanController {
 
   //PID Stuffs
   public void setVelocityControl(double velocity){
-      motor.getPIDController().setReference(velocity, ControlType.kVelocity);
+      motor.getPIDController().setReference(velocity, CANSparkBase.ControlType.kVelocity);
+    
   }
 
   public void setPositionControl(double position){
-      motor.getPIDController().setReference(position, ControlType.kPosition);
+      motor.getPIDController().setReference(position, CANSparkBase.ControlType.kPosition);
   }
 
   public void setSmartMotionPositionControl(double position){
-      motor.getPIDController().setReference(position, ControlType.kSmartMotion);
+      motor.getPIDController().setReference(position, CANSparkBase.ControlType.kSmartMotion);
   }
 
   public SparkPIDController getPIDController(){

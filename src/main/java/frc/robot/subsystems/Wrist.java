@@ -253,16 +253,7 @@ public Command incrementPositionCommand(double increment) {
         case 0:
           break;
         case 1:
-     
-          tab.addNumber("kP", ()-> wristMotor.getMotorConfig().kP);
-          tab.addNumber("kI", ()-> wristMotor.getMotorConfig().kI);
-          tab.addNumber("kD", ()-> wristMotor.getMotorConfig().kD);
-          tab.addNumber("kV", ()-> wristMotor.getMotorConfig().kV);
-          tab.addNumber("kS", ()-> wristMotor.getMotorConfig().kS);
-          tab.addNumber("kA", ()-> wristMotor.getMotorConfig().kA);
-          tab.addNumber("kG", ()-> wristMotor.getMotorConfig().kG);
-          tab.addNumber("kAccel", ()-> wristMotor.getMagicMotionMotorConfig().MotionMagicAcceleration);
-          tab.addNumber("kCruiseVel", ()->  wristMotor.getMagicMotionMotorConfig().MotionMagicCruiseVelocity);
+    
           tab.addString("Current Command", () -> this.getCurrentCommand() == null ? "None" : this.getCurrentCommand().getName());
 
         case 2:

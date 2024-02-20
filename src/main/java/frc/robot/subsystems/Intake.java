@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase {
     if (level == 0)  {
         return;
     }
-    ShuffleboardTab tab = Shuffleboard.getTab("Indexer");
+    ShuffleboardTab tab = Shuffleboard.getTab("Intake");
 
     switch (level) {
         case 0:

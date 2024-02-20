@@ -36,7 +36,6 @@ public class AboveBumperLEDs extends SubsystemBase {
         // Set the data
         m_led.setData(m_ledBuffer);
         m_led.start();
-        DriveTrainLEDs.hue = 80;
     }
 
     //#region Base Layers
@@ -58,7 +57,7 @@ public class AboveBumperLEDs extends SubsystemBase {
     static double baseHue = 10;
     private void noiseModifier()
     {
-        double noiseVal = OpenSimplex.noise2_ImproveX(1934173838, 0, offset);
+        double noiseVal = OpenSimplex.noise2_ImproveX(1934173838, 0, AboveBumperLEDs.offset);
         noiseVal *= fluctuationRange;
 
         for(int i = 0; i < numLEDs; i++)

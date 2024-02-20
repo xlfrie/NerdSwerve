@@ -5,7 +5,16 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Shooter.shooterPercentCommand;
+import frc.robot.commands.arm.ArmPercentCommand;
+import frc.robot.commands.arm.ArmTargetPositionManual;
+import frc.robot.commands.intake.IntakePercentCommand;
 import frc.robot.commands.swerve.SwerveJoystickCommand;
+import frc.robot.commands.wrist.WristPercentCommand;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.FlyWheelShooter;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.GyroStuffs.PigeonV2;
 import frc.robot.subsystems.LEDs.AboveBumperLEDs;
 import frc.robot.subsystems.LEDs.DriveTrainLEDs;
@@ -19,6 +28,7 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -36,15 +46,26 @@ public class RobotContainer {
   private JoystickButton driveAbutton = new JoystickButton(driveController, 2);
   private JoystickButton driveYbutton = new JoystickButton(driveController, 3);
   private JoystickButton driveBbutton = new JoystickButton(driveController, 4);
+  private JoystickButton driveRightBumperButton = new JoystickButton(driveController, 5);
+  private JoystickButton driveLeftBumperButton = new JoystickButton(driveController, 6);
+  private JoystickButton driveLeftTriggerButton = new JoystickButton(driveController, 7);
+  private JoystickButton driveRightTriggerButton = new JoystickButton(driveController, 8);
+  private POVButton driverUpPOVButton = new POVButton(driveController, 0);
+
+
 
 
 
 
   private PigeonV2 gyro = new PigeonV2(0);
   private SwerveDriveTrain drive = new SwerveDriveTrain(gyro);
+  private Arm arm = new Arm();
+  private Wrist wrist = new Wrist();
+  private Intake intake = new Intake();
+  private FlyWheelShooter shooter = new FlyWheelShooter();
  
   private DriveTrainLEDs dtLEDs = new DriveTrainLEDs();
-  private AboveBumperLEDs abLEDs = new AboveBumperLEDs();
+  // private AboveBumperLEDs abLEDs = new AboveBumperLEDs();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -66,6 +87,25 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
+     driveAbutton.whileTrue(new ArmPercentCommand(arm, 0.5, false));
+     driveBbutton.whileTrue(new ArmPercentCommand(arm, -0.5, false));
+
+      driveXbutton.whileTrue(new WristPercentCommand(wrist, 0.1, false));
+      driveYbutton.whileTrue(new WristPercentCommand(wrist, -0.1, false));
+
+      driveLeftTriggerButton.whileTrue(new IntakePercentCommand(intake, 0.5));
+      driveRightTriggerButton.whileTrue(new IntakePercentCommand(intake, -0.5));
+
+      // driveAbutton.whileTrue(new IntakePercentCommand(intake, 0.5));
+      // driveBbutton.whileTrue(new IntakePercentCommand(intake, -0.5));
+
+      driveLeftBumperButton.whileTrue(new shooterPercentCommand(shooter, 0.5));
+      driveRightBumperButton.whileTrue(new shooterPercentCommand(shooter, -0.5));
+
+      driverUpPOVButton.whileTrue(new ArmTargetPositionManual(arm, 0));
+
+    
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
@@ -74,8 +114,13 @@ public class RobotContainer {
 
   }
   public void initShuffleboard() {
-  drive.initModuleShuffleboard(1);
-  drive.initMainShuffleboard(1);
+  //drive.initModuleShuffleboard(1);
+  //drive.initMainShuffleboard(1);
+  arm.initShuffleboard(1);
+  intake.initShuffleboard(1);
+  wrist.initShuffleboard(1);
+  shooter.initShuffleboard(1);
+
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
