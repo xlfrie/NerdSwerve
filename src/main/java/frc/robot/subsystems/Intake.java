@@ -17,15 +17,21 @@ public class Intake extends SubsystemBase {
 
   private ShuffleboardTab intakeTab = Shuffleboard.getTab("Intake Troubleshooting");
   private GenericEntry sbManualSpeedPercent = intakeTab.add("Speed Percent In", 0).withPosition(0, 0).getEntry();
-    
+  private GenericEntry sbManualTargetVelocity = intakeTab.add("Target Velocity In", 0).withPosition(1, 0).getEntry();
+   
 
   private final CanController intakeMotor;
   private boolean enabled = SubSystemConfigs.kEnableIntake;
   private boolean troubleshooting = true;
-  
+  private double targetRPM;
+
+  private boolean aboveIntakeVelocity;
+
   public Intake() {
     intakeMotor = new CanController(IntakeConstants.kIntakeID);
     intakeMotor.configureMotor( IntakeConstants.kRotorToSensorRatio, IntakeConstants.kOpenLoopRampRate, IntakeConstants.kControlFramePeriod, IntakeConstants.kEncoderControlFramePeriod, IntakeConstants.kInverted, IntakeConstants.kIdleBrake);
+    intakeMotor.configurePIDF(0.0001, 0, 0, 0,0, 0, 1);
+    aboveIntakeVelocity = false;
   }
 
   
@@ -33,10 +39,39 @@ public class Intake extends SubsystemBase {
     intakeMotor.stop();
   }
 
+  public void setAboveIntake(boolean bol){
+    this.aboveIntakeVelocity = bol;
+  }
+  public boolean getAboveIntake(){
+    return aboveIntakeVelocity;
+  }
+
   public double getVelocity(){
     return intakeMotor.getVelocity();
   }
 
+  public void setTargetVelocityShuffleboard(){
+    double vel= sbManualTargetVelocity.getDouble(0);
+    setTargetVelocity(vel);
+    setEnabled(true);
+    
+  }
+
+  public void setEnabled(boolean bol){
+    this.enabled = bol;
+  }
+
+  public double getTargetVelocity(){
+    return targetRPM;
+  }
+  
+public boolean getEnabled(){
+  return this.enabled;
+}
+
+  public void setTargetVelocity(double vel){
+    this.targetRPM = vel;
+  }
 
   public double getAppliedVoltage(){
     return intakeMotor.getMotorVoltage();
@@ -50,6 +85,12 @@ public class Intake extends SubsystemBase {
     double speed = sbManualSpeedPercent.getDouble(0);
     setPercentage(speed);
   }
+
+  public void setVelocityControl(double vel){
+    intakeMotor.setVelocityControl(vel);
+  }
+
+  
 
 
   public void initShuffleboard(int level) {
@@ -65,7 +106,10 @@ public class Intake extends SubsystemBase {
         case 1:
           tab.addString("Current Command", () -> this.getCurrentCommand() == null ? "None" : this.getCurrentCommand().getName());
         case 2:
-         
+        tab.addBoolean("Enable Intake PID", () -> getEnabled());
+        tab.addNumber("Target Velocity", () -> getTargetVelocity());
+
+
         case 3:
           tab.addNumber("Current Voltage", () -> getAppliedVoltage());
           tab.addNumber("Current Velocity", () -> getVelocity());
@@ -74,6 +118,19 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    // if (getEnabled()){
+    //   setVelocityControl(targetRPM);
+    // }
+    // else{
+    //   if (troubleshooting){
+        
+    //   }
+    //   else{
+    //     stop();
+    //   }
+    // }
+  
     // This method will be called once per scheduler run
   }
 }

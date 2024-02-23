@@ -259,15 +259,15 @@ public final class Constants {
     //Motor Constants
     public static final double kRotorToSensorRatio=0;
     public static final double kOpenLoopRampRate =0;
-    public static final int kControlFramePeriod =0;
-    public static final int kEncoderControlFramePeriod =0;
-    public static final boolean kLeftInverted =true;
-        public static final boolean kRightInverted =false;
+    public static final int kControlFramePeriod =50;
+    public static final int kEncoderControlFramePeriod =20;
+    public static final boolean kLeftInverted =false;
+    public static final boolean kRightInverted =true;
 
     public static final boolean kIdleBrake = true;
 
     //PID Constants
-    public static final double kP =0.1;
+    public static final double kP =0.075;
     public static final double kI =0;
     public static final double kD =0;
     public static final double kIz =0;
@@ -288,7 +288,7 @@ public final class Constants {
     }
   public static final class IndexerConstants {
     
-    public static final int kIndexerID = 13;
+    public static final int kIndexerID = 7;
 
       //Motor Constants
     public static final double kRotorToSensorRatio=0;
@@ -346,7 +346,7 @@ public final class Constants {
 
 //Magic Motion Constants
 //double kP, double kI, double kD, double kV, double kS, double kA, double kG, double cruiseVel, double accel
-    public static final double kP = 0.01;
+    public static final double kP = 0.75;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kV = 0;

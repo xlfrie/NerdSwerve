@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.AbsoluteEncoder;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -53,6 +55,9 @@ public class Arm extends SubsystemBase {
   private boolean troubleshooting = true;
   private boolean smartMotionEnabled = false;
 
+  private PIDController startUpPID;
+  private boolean haventStarted = true;
+
 
   public Arm() {
 
@@ -69,8 +74,14 @@ public class Arm extends SubsystemBase {
     armRightMotor.configureSmartMotion(ArmConstants.kMaxVelocity, ArmConstants.kMinVelocity, ArmConstants.kMaxAccel, ArmConstants.kAllowedError);
 
 
+    startUpPID = new PIDController(0.0075, 0, 0);
+    startUpPID.enableContinuousInput(0, 1);
+    startUpPID.setTolerance(0.05);
+
     throughbore = new Encoder(7, 6);
     resetEncoder();
+
+
   }
 
   public void resetEncoder(){
@@ -93,6 +104,10 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+
+
+
 
     if (getEnabled()) {
       if (smartMotionEnabled){
@@ -141,7 +156,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return throughbore.getRaw();
+    return armLeftMotor.getAbsolutePosition();
   }
 
   public boolean hasReachedPosition(double position){
@@ -203,7 +218,9 @@ setTargetPosition(WristConstants.kStowPosition);
   //****************************** MANUAL METHODS ******************************//
 public void setPercentage(double per){
   armLeftMotor.setSpeed(per);
-  armRightMotor.setSpeed(per);
+ armRightMotor.setSpeed(per);
+  setEnabled(false);
+
 
 
 
@@ -250,6 +267,10 @@ public void updateMagicMotionValueShuffleBoard(){
   armRightMotor.configureSmartMotion(kMaxVel, kMinVel, kMaxAccel, kAllowedError);
 }
 
+private boolean getHaventStarted(){
+  return this.haventStarted;
+}
+
 
 public void initShuffleboard(int level) {
   //Im dumb, so 0 = off, 1 = everything, 2 = medium, 3 = minimal
@@ -269,6 +290,8 @@ public void initShuffleboard(int level) {
         tab.addNumber("Absolute Position", () -> getAbsolutePosition());
         tab.addNumber("Current Error", () -> getCurrentError());
         tab.addBoolean("Enable Arm PID", () -> getEnabled());
+        tab.addBoolean("Haven't started", () -> getHaventStarted());
+
 
 
 

@@ -34,6 +34,8 @@ public class CanController {
             motor.restoreFactoryDefaults();
             motor.setSmartCurrentLimit(50);
 
+            
+
             if (idleBrake){
             motor.setIdleMode(IdleMode.kBrake);
             }
@@ -60,6 +62,7 @@ public class CanController {
             motor.getPIDController().setFF(kF);
             motor.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
             
+        
 
           
           }
@@ -110,7 +113,6 @@ public class CanController {
   //PID Stuffs
   public void setVelocityControl(double velocity){
       motor.getPIDController().setReference(velocity, CANSparkBase.ControlType.kVelocity);
-    
   }
 
   public void setPositionControl(double position){

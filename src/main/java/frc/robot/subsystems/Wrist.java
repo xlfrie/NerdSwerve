@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.PubSub;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -74,9 +75,10 @@ public class Wrist extends SubsystemBase {
 
   //I think the wrist runnin
   private boolean enabled = SubSystemConfigs.kEnableWrist;
-  private boolean smartMotionEnabled = true;
+  private boolean smartMotionEnabled = false;
 
   private double targetPosition = 0;
+  private PIDController wristPIDController;
 
 
   public Wrist() {
@@ -85,12 +87,18 @@ public class Wrist extends SubsystemBase {
     wristMotor.configureMotor(WristConstants.kRotorToSensorRatio, WristConstants.kSensorToMechanismRatio, WristConstants.kDutyCycleNeutralDeadband, WristConstants.kInvertClockwise, WristConstants.kIdleBrake);
     wristMotor.configurePIDF(WristConstants.kP, WristConstants.kI, WristConstants.kD, WristConstants.kV, WristConstants.kS, WristConstants.kA, WristConstants.kG, WristConstants.kCruiseVel, WristConstants.kAccel);
     throughBore = new Encoder(9, 8);
+
+    wristPIDController = new PIDController(WristConstants.kP, WristConstants.kI, WristConstants.kD);
   
     resetEncoder();
 
   
   }
 
+  
+public boolean getEnabled(){
+  return this.enabled;
+}
 
   public void resetEncoder(){
     throughBore.reset();

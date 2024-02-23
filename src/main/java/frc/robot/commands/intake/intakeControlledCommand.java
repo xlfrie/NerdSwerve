@@ -7,14 +7,16 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
-public class IntakePercentCommand extends Command {
-  /** Creates a new IntakePercentCommand. */
+public class intakeControlledCommand extends Command {
+  /** Creates a new intakeControlledCommand. */
   Intake intake;
-  double speed;
+  double velocity;
+  boolean isFinished;
 
-  public IntakePercentCommand(Intake in, double s) {
-    this.speed = s;
+  public intakeControlledCommand(Intake in, double vel) {
     this.intake = in;
+    this.velocity = vel;
+    isFinished = false;
     addRequirements(in);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -22,25 +24,32 @@ public class IntakePercentCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    isFinished = false;
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setEnabled(false);
-
-    intake.setPercentage(speed);
+    intake.setVelocityControl(velocity);
+    if (intake.getVelocity()>750){
+      intake.setAboveIntake(true);
+    }
+    if ((intake.getAboveIntake())&(intake.getVelocity()<650)){
+      isFinished = true;
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    intake.setAboveIntake(false);
     intake.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }

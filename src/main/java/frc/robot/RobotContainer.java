@@ -9,8 +9,11 @@ import frc.robot.commands.Shooter.shooterPercentCommand;
 import frc.robot.commands.arm.ArmPercentCommand;
 import frc.robot.commands.arm.ArmTargetPositionManual;
 import frc.robot.commands.intake.IntakePercentCommand;
+import frc.robot.commands.intake.IntakeTargetVelocityManual;
+import frc.robot.commands.intake.intakeControlledCommand;
 import frc.robot.commands.swerve.SwerveJoystickCommand;
 import frc.robot.commands.wrist.WristPercentCommand;
+import frc.robot.commands.wrist.WristTargetPositionManual;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.FlyWheelShooter;
 import frc.robot.subsystems.Intake;
@@ -51,6 +54,12 @@ public class RobotContainer {
   private JoystickButton driveLeftTriggerButton = new JoystickButton(driveController, 7);
   private JoystickButton driveRightTriggerButton = new JoystickButton(driveController, 8);
   private POVButton driverUpPOVButton = new POVButton(driveController, 0);
+  private POVButton driverDownPOVButton = new POVButton(driveController, 180);
+  private POVButton driverRightPOVButton = new POVButton(driveController, 90);
+    private POVButton driverLeftPOVButton = new POVButton(driveController, 270);
+
+
+
 
 
 
@@ -103,7 +112,10 @@ public class RobotContainer {
       driveLeftBumperButton.whileTrue(new shooterPercentCommand(shooter, 0.5));
       driveRightBumperButton.whileTrue(new shooterPercentCommand(shooter, -0.5));
 
-      driverUpPOVButton.whileTrue(new ArmTargetPositionManual(arm, 0));
+      driverUpPOVButton.whileTrue(new ArmTargetPositionManual(arm, 31));
+      driverDownPOVButton.whileTrue(new WristTargetPositionManual(wrist, -3));
+      driverRightPOVButton.whileTrue(new IntakeTargetVelocityManual(intake, 0));
+      driverLeftPOVButton.onTrue(new intakeControlledCommand(intake, 2400));
 
     
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`

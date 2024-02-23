@@ -49,6 +49,9 @@ public class TalonFXController {
         this.motionMagicRequest = new MotionMagicVoltage(0, true, 0, 0, false, false, false);
         this.motionMagicRequest.Slot = 0;
 
+        this.motorPositionRequest = new PositionVoltage(0, 0, false, 0, 0, false, false, false);
+        this.motorPositionRequest.Slot = 0;
+
         this.brakeRequest = new NeutralOut();
         
 
