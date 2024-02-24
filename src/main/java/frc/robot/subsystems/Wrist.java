@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SubSystemConfigs;
 import frc.robot.Constants.WristConstants;
 import frc.robot.utils.CanController;
@@ -201,12 +202,36 @@ public Command incrementPositionCommand(double increment) {
 
     
   public Command moveToNeutralCommand() {
-        return Commands.runOnce(() -> setTargetPosition(WristConstants.kStowPosition));
+        return Commands.runOnce(() -> setTargetPosition(WristConstants.kNeutralPosition));
     }
   public void moveToNeutral(){
-    setTargetPosition(WristConstants.kStowPosition);
+    setTargetPosition(WristConstants.kNeutralPosition);
   }
-  
+
+  public void moveToGroundIntake(){
+    setTargetPosition(WristConstants.kGroundIntakePosition);
+    setEnabled(true);
+  }
+  public Command moveToGroundIntakeCommand() {
+    return Commands.runOnce(() -> moveToGroundIntake());
+}
+  public void moveToShooterFeeding(){
+    setTargetPosition(WristConstants.kShooterFeedingPosition);
+    setEnabled(true);
+  }
+
+  public Command moveToShooterFeedingCommand(){
+        return Commands.runOnce(() -> moveToShooterFeeding());
+  }
+
+  public void moveToAmpScoring(){
+    setTargetPosition(WristConstants.kAmpScoringPosition);
+    setEnabled(true);
+  }
+  public Command moveToAmpScoringCommand() {
+
+    return Commands.runOnce(() -> moveToAmpScoring());
+}
       //****************************** MANUAL METHODS ******************************//
   public void setPercentage(double per){
     wristMotor.setSpeed(per);

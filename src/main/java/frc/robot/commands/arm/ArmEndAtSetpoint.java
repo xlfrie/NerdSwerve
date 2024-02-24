@@ -2,48 +2,42 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.intake;
+package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Arm;
 
-public class intakeControlledCommand extends Command {
-  /** Creates a new intakeControlledCommand. */
-  Intake intake;
-  double velocity;
+public class ArmEndAtSetpoint extends Command {
+  /** Creates a new ArmEndAtSetpoint. */
+  Arm arm;
   boolean isFinished;
-
-  public intakeControlledCommand(Intake in, double vel) {
-    this.intake = in;
-    this.velocity = vel;
-    isFinished = false;
-    addRequirements(in);
+  public ArmEndAtSetpoint(Arm a) {
+    this.arm = a;
+    isFinished =false;
+    addRequirements(a);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setEnabled(true);
     isFinished = false;
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  
+    isFinished = arm.hasReachedPosition(arm.getTargetPosition());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }

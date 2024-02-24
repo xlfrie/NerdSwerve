@@ -150,6 +150,7 @@ public class Arm extends SubsystemBase {
   public void setTargetPosition(double pos){
     this.targetPosition = pos;
 
+
   }
   public double getPosition(){
     return armRightMotor.getPosition();
@@ -160,7 +161,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean hasReachedPosition(double position){
-    if (Math.abs(getAbsolutePosition()-position)<WristConstants.kAllowedError){
+    if (Math.abs(getPosition()-position)<0.75){
       return true;
     }
     else{
@@ -209,10 +210,37 @@ public boolean getEnabled(){
 
     
    public Command moveToNeutralCommand() {
-    return Commands.runOnce(() -> setTargetPosition(WristConstants.kStowPosition));
+    return Commands.runOnce(() -> setTargetPosition(ArmConstants.kNeutralPosition));
 }
-public void moveToNeutral(){
-setTargetPosition(WristConstants.kStowPosition);
+  public void moveToNeutral(){
+  setTargetPosition(WristConstants.kNeutralPosition);
+  }
+  public void moveToGroundIntake(){
+    setTargetPosition(ArmConstants.kGroundIntakePosition);
+    setEnabled(true);
+  }
+  public Command moveToGroundIntakeCommand() {
+
+    return Commands.runOnce(() -> moveToGroundIntake());
+}
+
+public void moveToShooterFeeding(){
+  setTargetPosition(ArmConstants.kShooterFeedingPosition);
+  setEnabled(true);
+}
+
+public Command moveToShooterFeedingCommand(){
+      return Commands.runOnce(() -> moveToShooterFeeding());
+
+}
+
+public void moveToAmpScoring(){
+    setTargetPosition(ArmConstants.kAmpScoringPosition);
+    setEnabled(true);
+  }
+  public Command moveToAmpScoringCommand() {
+
+    return Commands.runOnce(() -> moveToAmpScoring());
 }
 
   //****************************** MANUAL METHODS ******************************//

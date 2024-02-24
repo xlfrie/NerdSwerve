@@ -28,11 +28,11 @@ public final class Constants {
 
   public static class SubSystemConfigs{
 
-    public static final boolean kEnableWrist = false;
+    public static final boolean kEnableWrist = true;
     public static final boolean kEnableShooter = false;
     public static final boolean kEnableIntake = false;
     public static final boolean kEnableIndexer = false;
-    public static final boolean kEnableArm = false;
+    public static final boolean kEnableArm = true;
 
 
 
@@ -219,7 +219,7 @@ public final class Constants {
 
   public static final class FlywheelConstants {
 
-    public static final int kTopShooterID = 2;
+    public static final int kTopShooterID = 8;
     public static final int kBottomShooterID = 3;
 
 
@@ -282,24 +282,36 @@ public final class Constants {
     public static final double kAllowedError = 0;
 
 
+      //Position Setpoints
+    public static final double kNeutralPosition =0;
+    public static final double kGroundIntakePosition =31.5;
+    public static final double kShooterFeedingPosition =-21;
+    public static final double kAmpScoringPosition =6;
+
+
 
     
 
     }
   public static final class IndexerConstants {
     
-    public static final int kIndexerID = 7;
+    public static final int kTopIndexerID = 7;
+    public static final int kBottomIndexerID = 2;
+
+
 
       //Motor Constants
     public static final double kRotorToSensorRatio=0;
     public static final double kOpenLoopRampRate =0;
     public static final int kControlFramePeriod =0;
     public static final int kEncoderControlFramePeriod =0;
-    public static final boolean kInverted =true;
+    public static final boolean kTopInverted =true;
+    public static final boolean kBottomInverted =true;
+
     public static final boolean kIdleBrake = true;
    
    //PID Constants
-    public static final double kP =0;
+    public static final double kP =0.01;
     public static final double kI =0;
     public static final double kD =0;
     public static final double kIz =0;
@@ -363,9 +375,17 @@ public final class Constants {
     public static final double kEncoderPositionToAngle =0;
 
   //Preset Position
-    public static final double kStowPosition =0;
+    public static final double kNeutralPosition =0;
+
+    public static final double kGroundIntakePosition =-3;
+    public static final double kShooterFeedingPosition =11;
+    public static final double kAmpScoringPosition =-3;
+
+
+
 
   }
-
-
 }
+
+
+

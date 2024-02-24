@@ -65,6 +65,10 @@ public class FlyWheelShooter extends SubsystemBase {
     topMotor.setPosition(pos);
   }
 
+  public double getPosition(){
+    return topMotor.getPosition();
+  }
+
   public void stop(){
     topMotor.stop();
     bottomMotor.stop();
@@ -232,6 +236,8 @@ public Command speedToNeutralCommand() {
       
           tab.addNumber("Current Velocity", () -> getVelocity());
           tab.addNumber("Current Error", () -> getCurrentError());
+          tab.addNumber("Current Position", () -> getPosition());
+
 
         case 3:
           tab.addNumber("Top percent (motor controller)", () -> getTopAppliedVoltage());

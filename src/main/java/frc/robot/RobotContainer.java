@@ -8,6 +8,11 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Shooter.shooterPercentCommand;
 import frc.robot.commands.arm.ArmPercentCommand;
 import frc.robot.commands.arm.ArmTargetPositionManual;
+import frc.robot.commands.commandgroups.AmpScoringCommand;
+import frc.robot.commands.commandgroups.GroundIntakeCommand;
+import frc.robot.commands.commandgroups.NeutralPositionCommand;
+import frc.robot.commands.commandgroups.ShooterFeedingCommand;
+import frc.robot.commands.indexer.IndexerPercentCommand;
 import frc.robot.commands.intake.IntakePercentCommand;
 import frc.robot.commands.intake.IntakeTargetVelocityManual;
 import frc.robot.commands.intake.intakeControlledCommand;
@@ -16,6 +21,7 @@ import frc.robot.commands.wrist.WristPercentCommand;
 import frc.robot.commands.wrist.WristTargetPositionManual;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.FlyWheelShooter;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.GyroStuffs.PigeonV2;
@@ -71,6 +77,7 @@ public class RobotContainer {
   private Arm arm = new Arm();
   private Wrist wrist = new Wrist();
   private Intake intake = new Intake();
+  private Indexer indexer = new Indexer();
   private FlyWheelShooter shooter = new FlyWheelShooter();
  
   private DriveTrainLEDs dtLEDs = new DriveTrainLEDs();
@@ -97,25 +104,34 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-     driveAbutton.whileTrue(new ArmPercentCommand(arm, 0.5, false));
-     driveBbutton.whileTrue(new ArmPercentCommand(arm, -0.5, false));
+     // driveAbutton.whileTrue(new ArmPercentCommand(arm, 0.75, false));
+     // driveBbutton.whileTrue(new ArmPercentCommand(arm, -0.75, false));
+      driveAbutton.whileTrue(new IndexerPercentCommand(indexer, -0.2));
+      driveBbutton.whileTrue(new IndexerPercentCommand(indexer, 0.2));
+
+
 
       driveXbutton.whileTrue(new WristPercentCommand(wrist, 0.1, false));
       driveYbutton.whileTrue(new WristPercentCommand(wrist, -0.1, false));
 
-      driveLeftTriggerButton.whileTrue(new IntakePercentCommand(intake, 0.5));
-      driveRightTriggerButton.whileTrue(new IntakePercentCommand(intake, -0.5));
+      driveLeftTriggerButton.whileTrue(new IntakePercentCommand(intake, 0.2));
+      driveRightTriggerButton.whileTrue(new IntakePercentCommand(intake, -0.2));
 
       // driveAbutton.whileTrue(new IntakePercentCommand(intake, 0.5));
       // driveBbutton.whileTrue(new IntakePercentCommand(intake, -0.5));
 
-      driveLeftBumperButton.whileTrue(new shooterPercentCommand(shooter, 0.5));
-      driveRightBumperButton.whileTrue(new shooterPercentCommand(shooter, -0.5));
+      driveLeftBumperButton.whileTrue(new shooterPercentCommand(shooter, 1.0));
+      driveRightBumperButton.whileTrue(new shooterPercentCommand(shooter, -1.0));
 
-      driverUpPOVButton.whileTrue(new ArmTargetPositionManual(arm, 31));
-      driverDownPOVButton.whileTrue(new WristTargetPositionManual(wrist, -3));
-      driverRightPOVButton.whileTrue(new IntakeTargetVelocityManual(intake, 0));
-      driverLeftPOVButton.onTrue(new intakeControlledCommand(intake, 2400));
+      //driverUpPOVButton.whileTrue(new ArmTargetPositionManual(arm, 31));
+      //driverDownPOVButton.whileTrue(new WristTargetPositionManual(wrist, -3));
+      
+      driverDownPOVButton.whileTrue(new NeutralPositionCommand(arm, wrist,intake));
+      driverRightPOVButton.whileTrue(new GroundIntakeCommand(arm, intake, wrist));
+      driverLeftPOVButton.onTrue(new ShooterFeedingCommand(arm, intake, wrist, shooter));
+      driverUpPOVButton.onTrue(new AmpScoringCommand(arm, wrist, intake));
+
+      //driverLeftPOVButton.onTrue(new intakeControlledCommand(intake, 2400));
 
     
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
@@ -132,6 +148,7 @@ public class RobotContainer {
   intake.initShuffleboard(1);
   wrist.initShuffleboard(1);
   shooter.initShuffleboard(1);
+  indexer.initShuffleboard(1);
 
   }
   /**

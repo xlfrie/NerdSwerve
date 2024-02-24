@@ -7,9 +7,13 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SubSystemConfigs;
+import frc.robot.Constants.WristConstants;
 import frc.robot.utils.CanController;
 
 public class Intake extends SubsystemBase {
@@ -50,6 +54,11 @@ public class Intake extends SubsystemBase {
     return intakeMotor.getVelocity();
   }
 
+  public void controlledIntake(){
+    intakeMotor.setVelocityControl(2400);
+
+  }
+
   public void setTargetVelocityShuffleboard(){
     double vel= sbManualTargetVelocity.getDouble(0);
     setTargetVelocity(vel);
@@ -59,6 +68,13 @@ public class Intake extends SubsystemBase {
 
   public void setEnabled(boolean bol){
     this.enabled = bol;
+  }
+  public void enableIntake(){
+    this.enabled =true;
+  }
+
+  public Command enableIntakeCommand(){
+    return Commands.runOnce(() ->this.enableIntake());
   }
 
   public double getTargetVelocity(){
@@ -90,7 +106,7 @@ public boolean getEnabled(){
     intakeMotor.setVelocityControl(vel);
   }
 
-  
+ 
 
 
   public void initShuffleboard(int level) {
@@ -119,6 +135,19 @@ public boolean getEnabled(){
   @Override
   public void periodic() {
 
+    if(enabled){
+      setVelocityControl(2400);
+    if (getVelocity()>750){
+        setAboveIntake(true);
+    }
+    if ((getAboveIntake())&(getVelocity()<600)){
+        setAboveIntake(false);
+        stop();
+        setEnabled(false);
+    }
+  }
+  
+      
     // if (getEnabled()){
     //   setVelocityControl(targetRPM);
     // }

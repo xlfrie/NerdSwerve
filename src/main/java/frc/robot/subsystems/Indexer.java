@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.SubSystemConfigs;
@@ -33,47 +34,66 @@ public class Indexer extends SubsystemBase {
 
 
 
-  private final CanController indexerMotor;
+  private final CanController topIndexerMotor;
+  private final CanController bottomIndexerMotor;
   private boolean enabled = SubSystemConfigs.kEnableIndexer;
-  private double targetPosition = 0;
+  private double targetVelocity = 0;
 
   private boolean troubleshooting = true;
 
   public Indexer() {
 
-    indexerMotor = new CanController(IndexerConstants.kIndexerID);
+    topIndexerMotor = new CanController(IndexerConstants.kTopIndexerID);
+    bottomIndexerMotor = new CanController(IndexerConstants.kBottomIndexerID);
 
-    indexerMotor.configureMotor( IndexerConstants.kRotorToSensorRatio, IndexerConstants.kOpenLoopRampRate, IndexerConstants.kControlFramePeriod, IndexerConstants.kEncoderControlFramePeriod, IndexerConstants.kInverted, IndexerConstants.kIdleBrake);
-    indexerMotor.configurePIDF(IndexerConstants.kP, IndexerConstants.kI, IndexerConstants.kD, IndexerConstants.kIz, IndexerConstants.kF, IndexerConstants.kMinOutput, IndexerConstants.kMaxOutput);
+
+    topIndexerMotor.configureMotor( IndexerConstants.kRotorToSensorRatio, IndexerConstants.kOpenLoopRampRate, IndexerConstants.kControlFramePeriod, IndexerConstants.kEncoderControlFramePeriod, IndexerConstants.kTopInverted, IndexerConstants.kIdleBrake);
+    topIndexerMotor.configurePIDF(IndexerConstants.kP, IndexerConstants.kI, IndexerConstants.kD, IndexerConstants.kIz, IndexerConstants.kF, IndexerConstants.kMinOutput, IndexerConstants.kMaxOutput);
+
+    bottomIndexerMotor.configureMotor( IndexerConstants.kRotorToSensorRatio, IndexerConstants.kOpenLoopRampRate, IndexerConstants.kControlFramePeriod, IndexerConstants.kEncoderControlFramePeriod, IndexerConstants.kBottomInverted, IndexerConstants.kIdleBrake);
+    bottomIndexerMotor.configurePIDF(IndexerConstants.kP, IndexerConstants.kI, IndexerConstants.kD, IndexerConstants.kIz, IndexerConstants.kF, IndexerConstants.kMinOutput, IndexerConstants.kMaxOutput);
 
   }
 
   
   public void resetEncoder(double pos){
-    indexerMotor.setPosition(pos);
+    topIndexerMotor.setPosition(pos);
+    bottomIndexerMotor.setPosition(pos);
   }
 
-  public double getVelocity(){
-    return indexerMotor.getVelocity();
+  public double getTopVelocity(){
+    return topIndexerMotor.getVelocity();
   }
 
-  public double getPosition(){
-    return indexerMotor.getPosition();
+    public double getBottomVelocity(){
+    return bottomIndexerMotor.getVelocity();
   }
+
+  public double getTopPosition(){
+    return topIndexerMotor.getPosition();
+  }
+
+
+  public double getBottomPosition(){
+    return bottomIndexerMotor.getPosition();
+  }
+
 
   public void stop(){
-    indexerMotor.stop();
+    topIndexerMotor.stop();
+    bottomIndexerMotor.stop();
   }
 
   public Command stopCommand() {
       return Commands.runOnce(() -> stop());
   }
   public double getAppliedVoltage(){
-    return indexerMotor.getMotorVoltage();
+    return topIndexerMotor.getMotorVoltage();
   }
 
   public void setPercentage(double per){
-    indexerMotor.setSpeed(per);
+    topIndexerMotor.setSpeed(per);
+    bottomIndexerMotor.setSpeed(per);
   }
 
   public void setPercentageShuffleBoard(){
@@ -95,27 +115,39 @@ public class Indexer extends SubsystemBase {
     double kMinOut = sbkMinOut.getDouble(0);
     double kMaxOutput = sbkMaxOut.getDouble(0);
     
-    indexerMotor.configurePIDF(kP, kI, kD, kIzone, kF, kMinOut, kMaxOutput);
+    topIndexerMotor.configurePIDF(kP, kI, kD, kIzone, kF, kMinOut, kMaxOutput);
   }
 
-  public void setTargetPosition(double pos){
-    this.targetPosition = pos;
+  public void setTargetVelocity(double pos){
+    this.targetVelocity = pos;
   }
 
-  public double getTargetPosition(){
-    return this.targetPosition;
+  public double gettargetVelocity(){
+    return this.targetVelocity;
   }
 
-  public void setPIDPositionRelative(double pos){
-    setTargetPosition(getPosition()+ pos);
+
+
+  public void setVelocityControl(double vel){
+    topIndexerMotor.setVelocityControl(vel);
+    bottomIndexerMotor.setVelocityControl(vel);
+  }
+
+  public void setEnabled(boolean bol){
+    this.enabled = bol;
+  }
+
+  public boolean getEnabled(){
+    return enabled;
   }
 
   public void runPIDPosition(){
-    indexerMotor.setPositionControl(targetPosition);
+    topIndexerMotor.setPositionControl(targetVelocity);
+    bottomIndexerMotor.setPositionControl(targetVelocity);
   }
 
   public boolean hasReachedPosition(double position){
-    if (Math.abs(getPosition()-position)<IndexerConstants.kAllowedError){
+    if (Math.abs(getTopPosition()-position)<IndexerConstants.kAllowedError){
       return true;
     }
     else{
@@ -124,7 +156,18 @@ public class Indexer extends SubsystemBase {
   }
 
 
+ //Setpoints
 
+  public Command intakeOneNoteCommand() {
+    return Commands.runOnce(() -> intakeOneNote());
+}
+  public void intakeOneNote(){
+    setTargetVelocity(1000);
+    setEnabled(true);
+  
+  }
+
+  
 
 
   public void initShuffleboard(int level) {
@@ -142,14 +185,17 @@ public class Indexer extends SubsystemBase {
           tab.addString("Current Command", () -> this.getCurrentCommand() == null ? "None" : this.getCurrentCommand().getName());
 
         case 2:
-          tab.addNumber("Current Position", () -> getPosition());
-          tab.addNumber("Target Position", () -> getPosition());
+          tab.addNumber("Current Top Position", () -> getTopPosition());
+          tab.addNumber("Current Bottom Position", () -> getTopPosition());
+          tab.addNumber("Target Position", () -> gettargetVelocity());
 
  
 
         case 3:
           tab.addNumber("Current Voltage", () -> getAppliedVoltage());
-          tab.addNumber("Current Velocity", () -> getVelocity());
+          tab.addNumber("Current Top Velocity", () -> getTopVelocity());
+          tab.addNumber("Current Bottom Velocity", () -> getBottomVelocity());
+
 
     }
   }
@@ -157,11 +203,21 @@ public class Indexer extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if (enabled){
+      setVelocityControl(targetVelocity);    
+    }
+    else{
     if (troubleshooting){
       if (sbConfigurePID.getDouble(0)==1){
         updatePIDFValueShuffleBoard();
       }
     }
+    else{
+      stop();
+    }
     // This method will be called once per scheduler run
   }
+  }
 }
+
