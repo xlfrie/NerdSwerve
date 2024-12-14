@@ -6,6 +6,11 @@ plugins {
 
 checkstyle {
     toolVersion = "10.12.4"
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+}
+
+checkstyleMain {
+    source = 'src/main/java'
 }
 
 java {
@@ -74,6 +79,8 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstyle.toolVersion}"
 }
 
 test {
