@@ -14,11 +14,12 @@ import frc.robot.subsystems.Wrist;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GroundIntakeCommand extends ParallelCommandGroup {
-  /** Creates a new GroundIntakeCommand. */
-  public GroundIntakeCommand(Arm arm, Intake intake, Wrist wrist) {
+    /** Creates a new GroundIntakeCommand. */
+    public GroundIntakeCommand(Arm arm, Intake intake, Wrist wrist) {
 
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(arm.moveToGroundIntakeCommand(), wrist.moveToGroundIntakeCommand(),new intakeControlledCommand(intake, 2400));
-  }
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(arm.moveToGroundIntakeCommand(), wrist.moveToGroundIntakeCommand(),
+                new intakeControlledCommand(intake, 2400));
+    }
 }

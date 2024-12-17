@@ -5,10 +5,8 @@
 package frc.robot.commands.swerve;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -19,75 +17,73 @@ import frc.robot.subsystems.LEDs.DriveTrainLEDs;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
 public class SwerveJoystickCommand extends Command {
-  /** Creates a new SwerveJoystickCommand. */
-  private final SwerveDriveTrain drive;
+    /** Creates a new SwerveJoystickCommand. */
+    private final SwerveDriveTrain drive;
 
-  private double modifyInputs(double val, boolean isRot){
-    if (isRot){
-      if (Math.abs(val)<DriveConstants.kAngDeadband){
-        val =0;
-      }
-      return val*drive.getAng();
+    private double modifyInputs(double val, boolean isRot) {
+        if (isRot) {
+            if (Math.abs(val) < DriveConstants.kAngDeadband) {
+                val = 0;
+            }
+            return val * drive.getAng();
+        } else {
+            if (Math.abs(val) < DriveConstants.kTanDeadband) {
+                val = 0;
+            }
+            return val * drive.getTan();
+        }
     }
-    else{
-      if (Math.abs(val)<DriveConstants.kTanDeadband){
-        val =0;
-      }
-      return val*drive.getTan();
+
+    public void driveFromChassis(ChassisSpeeds speeds) {
+        var states = SwerveDriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        drive.setModuleStates(states);
     }
-  }
 
-    public void driveFromChassis(ChassisSpeeds speeds){
-    var states = SwerveDriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states,SwerveDriveConstants.kPhysicalMaxSpeedMetersPerSecond);
-    drive.setModuleStates(states);
-  }
+    private DoubleSupplier x, y, z;
 
-  private DoubleSupplier x,y,z;
+    public SwerveJoystickCommand(DoubleSupplier fwd, DoubleSupplier str, DoubleSupplier rot,
+            SwerveDriveTrain instance) {
+        // Use addRequirements() here to declare subsystem dependencies.
 
+        this.x = fwd;
+        this.y = str;
+        this.z = rot;
 
+        drive = instance;
+        addRequirements(drive);
+    }
 
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        driveFromChassis(ChassisSpeeds.fromFieldRelativeSpeeds(modifyInputs(x.getAsDouble(), false),
+                -modifyInputs(y.getAsDouble(), false), modifyInputs(z.getAsDouble(), true),
+                Rotation2d.fromDegrees(-drive.getDriveHeading().getDegrees())));
 
-  public SwerveJoystickCommand(DoubleSupplier fwd, DoubleSupplier str, DoubleSupplier rot, SwerveDriveTrain instance) {
-    // Use addRequirements() here to declare subsystem dependencies.
+        // set LED Color
+        double[] hueRange = { 120, 180 };
+        double maxSpeed = 1;
+        double currentSpeed = Math.sqrt(x.getAsDouble() * x.getAsDouble() + y.getAsDouble() * y.getAsDouble());
+        currentSpeed = MathUtil.clamp(currentSpeed, 0, 1);
+        DriveTrainLEDs.setHueLerp(hueRange, currentSpeed / maxSpeed);
+    }
 
-    this.x = fwd;
-    this.y = str;
-    this.z = rot;
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        driveFromChassis(new ChassisSpeeds());
 
-    drive = instance;
-    addRequirements(drive);
-  }
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    driveFromChassis(ChassisSpeeds.fromFieldRelativeSpeeds(modifyInputs(x.getAsDouble(), false), -modifyInputs(y.getAsDouble(), false),modifyInputs(z.getAsDouble(), true),
-    Rotation2d.fromDegrees(-drive.getDriveHeading().getDegrees())));
-
-    //set LED Color
-    double[] hueRange = {120,180};
-    double maxSpeed = 1;
-    double currentSpeed = Math.sqrt(x.getAsDouble()*x.getAsDouble() + y.getAsDouble()*y.getAsDouble());
-    currentSpeed = MathUtil.clamp(currentSpeed, 0, 1);
-    DriveTrainLEDs.setHueLerp(hueRange, currentSpeed/maxSpeed);
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    driveFromChassis(new ChassisSpeeds());
-
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

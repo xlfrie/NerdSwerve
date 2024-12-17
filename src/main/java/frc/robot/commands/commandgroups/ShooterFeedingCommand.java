@@ -6,10 +6,6 @@ package frc.robot.commands.commandgroups;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.FlywheelConstants;
-import frc.robot.commands.Shooter.ShooterEndAtPosition;
 import frc.robot.commands.Shooter.shooterPercentCommand;
 import frc.robot.commands.arm.ArmEndAtSetpoint;
 import frc.robot.commands.intake.IntakePercentCommand;
@@ -22,13 +18,18 @@ import frc.robot.subsystems.Wrist;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShooterFeedingCommand extends SequentialCommandGroup {
-  /** Creates a new ShooterFeedingCommand. */
-  public ShooterFeedingCommand(Arm arm, Intake intake, Wrist wrist, FlyWheelShooter shooter) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ParallelCommandGroup(arm.moveToShooterFeedingCommand(), wrist.moveToShooterFeedingCommand()), new ArmEndAtSetpoint(arm),  
-    new ParallelCommandGroup(new IntakePercentCommand(intake, 0.15),new shooterPercentCommand(shooter, -0.15)));
-  }
+    /** Creates a new ShooterFeedingCommand. */
+    public ShooterFeedingCommand(Arm arm, Intake intake, Wrist wrist, FlyWheelShooter shooter) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(new ParallelCommandGroup(arm.moveToShooterFeedingCommand(), wrist.moveToShooterFeedingCommand()),
+                new ArmEndAtSetpoint(arm),
+                new ParallelCommandGroup(new IntakePercentCommand(intake, 0.15),
+                        new shooterPercentCommand(shooter, -0.15)));
+    }
 }
 
-//,new ShooterEndAtPosition(shooter, -1500),new ParallelCommandGroup(new IntakePercentCommand(intake, 0),new shooterPercentCommand(shooter, 0)), new ParallelCommandGroup(arm.moveToNeutralCommand(), wrist.moveToNeutralCommand()));
+// ,new ShooterEndAtPosition(shooter, -1500),new ParallelCommandGroup(new
+// IntakePercentCommand(intake, 0),new shooterPercentCommand(shooter, 0)), new
+// ParallelCommandGroup(arm.moveToNeutralCommand(),
+// wrist.moveToNeutralCommand()));
