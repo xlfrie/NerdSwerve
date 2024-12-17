@@ -23,7 +23,7 @@
         <module name="AvoidStarImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports">
-            <property name="severity" value="warn" />
+            <property name="severity" value="warning" />
         </module>
     </module>
     <module name="FileTabCharacter"/>
