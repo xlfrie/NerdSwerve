@@ -25,6 +25,10 @@
         <module name="UnusedImports">
             <property name="severity" value="warning" />
         </module>
+
+        <module name="LeftCurly" />
+        <module name="ParenPad" />
+        <module name="MethodParamPad" />
     </module>
     <module name="FileTabCharacter"/>
 
